@@ -15,6 +15,7 @@
 		4820F69D2B6A7D1800ADDD52 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4820F69C2B6A7D1800ADDD52 /* Assets.xcassets */; };
 		4820F6A02B6A7D1800ADDD52 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4820F69F2B6A7D1800ADDD52 /* Preview Assets.xcassets */; };
 		4820F6A72B6AAAC400ADDD52 /* Stopwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4820F6A62B6AAAC400ADDD52 /* Stopwatch.swift */; };
+		48E870052B7028E5005DB59F /* GoalListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48E870042B7028E5005DB59F /* GoalListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		4820F69C2B6A7D1800ADDD52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		4820F69F2B6A7D1800ADDD52 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4820F6A62B6AAAC400ADDD52 /* Stopwatch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stopwatch.swift; sourceTree = "<group>"; };
+		48E870042B7028E5005DB59F /* GoalListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +45,7 @@
 		4820F68C2B6A7D1700ADDD52 = {
 			isa = PBXGroup;
 			children = (
+				48E870042B7028E5005DB59F /* GoalListView.swift */,
 				4820F6972B6A7D1700ADDD52 /* Footaayy Timer Watch App */,
 				4820F6962B6A7D1700ADDD52 /* Products */,
 			);
@@ -150,6 +153,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4820F69B2B6A7D1700ADDD52 /* ContentView.swift in Sources */,
+				48E870052B7028E5005DB59F /* GoalListView.swift in Sources */,
 				4809AF6C2B6EFC8B000A1417 /* SettingItems.swift in Sources */,
 				4820F6A72B6AAAC400ADDD52 /* Stopwatch.swift in Sources */,
 				4820F6992B6A7D1700ADDD52 /* Footaayy_TimerApp.swift in Sources */,

@@ -13,6 +13,7 @@ struct GoalList: View {
     
     @Binding var homeScores: keepScore
     @Binding var awayScores: keepScore
+    @Binding var thirdButton: keepScore
     @Binding var appSettings: globalSettings
     
     
@@ -24,7 +25,18 @@ struct GoalList: View {
                 
                 (Text("\(appSettings.matchLocation) - ") + Text(Date.now, format: .dateTime.day().month().year())).font(.system(size: 12))
                 
-                Text("Timer Delay: \(appSettings.timeDelay)")
+                let mergedGoals = mergeAndSortGoals(team1Goals: homeScores.times, team2Goals: awayScores.times)
+                
+                let thirdButtonData = formatThirdButton(thirdButtonData: thirdButton.times,thirdButtonLabel: "Tekkers")
+                
+                let goalsWithThirdButton = mergedGoals.merging(thirdButtonData) { (existing, new) in
+                    return existing // If keys conflict, use the value from dict1
+                }
+                
+                let sortedGoalsWithThirdButton = goalsWithThirdButton.sorted{$0.key < $1.key}
+                
+                ForEach(sortedGoalsWithThirdButton, id: \.0) { (_, value) in
+                    Text(value)}
                 
                 
             }

@@ -14,7 +14,7 @@ struct keepScore{
             print("\(self.teamName) have scored \(score)")
                 }
     }
-    var times = [Int: [String]](){
+    var times = [Int: (String, Double)](){
         didSet {
                     print("Goal Times:  \(times)")
                 }
@@ -40,7 +40,7 @@ struct globalSettings{
 }
 
 enum Pages {
-    case controlPanel, mainView, timeView
+    case controlPanel, mainView, goalListView
 }
 
 func watchTimeToReadable(from timeAsString: Float16, timeDelay: Double) -> String {
@@ -54,6 +54,65 @@ func elapsedTimeStr(timeInterval: TimeInterval) -> String {
    return formatter.string(from: timeInterval) ?? ""
 }
 
+func formatThirdButton(thirdButtonData: [Int: (String, Double)], thirdButtonLabel: String) -> [Double:String] {
+    var thirdButtonFormattedData: [Double:String] = [:]
+    for (_, thirdButtonTimes) in thirdButtonData {
+        
+        let goalTime = thirdButtonTimes.1
+        let formattedTime = thirdButtonTimes.0
+        
+        let completeGoalsString = "\(thirdButtonLabel) - (\(formattedTime))"
+        
+        thirdButtonFormattedData[goalTime] = completeGoalsString
+    }
+
+    return thirdButtonFormattedData
+
+}
+
+func mergeAndSortGoals(team1Goals: [Int: (String, Double)], team2Goals: [Int: (String, Double)]) -> [Double:String] {
+    var mergedGoals: [Double:String] = [:]
+    for (goalNumber, team1Time) in team1Goals {
+        
+        let goalTime = team1Time.1
+        let formattedTime = team1Time.0
+        let team1Score  = goalNumber
+        
+        let filteredTeam1ScoreTimes = team2Goals.filter { (_, time) in
+            
+            let (_, time) = time
+            return time < goalTime
+        }
+        
+        let team2Score = filteredTeam1ScoreTimes.count
+        
+        let completeGoalsString = "\(team1Score) - \(team2Score) (\(formattedTime))"
+        
+        mergedGoals[goalTime] = completeGoalsString
+    }
+    
+    for (goalNumber, team2Time) in team2Goals {
+        
+        let goalTime = team2Time.1
+        let formattedTime = team2Time.0
+        let team2Score  = goalNumber
+        
+        let filteredTeam2ScoreTimes = team1Goals.filter { (_, time) in
+            
+            let (_, time) = time
+            return time < goalTime
+        }
+        
+        let team1Score = filteredTeam2ScoreTimes.count
+        
+        let completeGoalsString = "\(team1Score) - \(team2Score) (\(formattedTime))"
+        
+        mergedGoals[goalTime] = completeGoalsString
+    }
+    
+    return mergedGoals
+}
+    
 var formatter: DateComponentsFormatter = {
        let formatter = DateComponentsFormatter()
        formatter.unitsStyle = .positional // Use the appropriate positioning for the current locale
@@ -69,34 +128,16 @@ struct ContentView: View {
     @State var appSettings = globalSettings()
     @State var homeScores = keepScore(teamName: "Home")
     @State var awayScores = keepScore(teamName: "Away")
-    @State var tekkers = keepScore(teamName: "Tekkers")
-    @State var scoreTimeList: [String] = []
-    
+    @State var thirdButton = keepScore(teamName: "Tekkers")
     @State private var selectedTab: Pages = .mainView
-    
-    
-    
-    func getscore() -> String{
-            let currentScore = "\(homeScores.score) - \(awayScores.score)"
-            print (currentScore)
-            return currentScore
-        }
-    
-    func newGoal(scoreOrTek: String){
-           
-        scoreTimeList.append("\(scoreOrTek) (\(watchTimeToReadable(from: Float16(Double(mainStopwatch.elapsedTime)), timeDelay: Double(appSettings.timeDelay))))")
-           
-           //scoreTimeList.append("\(scoreOrTek) ()")
-           
-           print(scoreTimeList)
-           
-       }
+
     
     var body: some View {
         TabView(selection: $selectedTab) {
             //SettingsPage(homeScores: $homeScores)
-            ControlPanel(mainStopwatch: mainStopwatch, homeScores: $homeScores, awayScores: $awayScores, tekkers: $tekkers,appSettings: $appSettings).tag(Pages.controlPanel)
-            MainView(mainStopwatch: mainStopwatch, homeScores: $homeScores, awayScores: $awayScores, tekkers: $tekkers,appSettings: $appSettings).tag(Pages.mainView)
+            ControlPanel(mainStopwatch: mainStopwatch, homeScores: $homeScores, awayScores: $awayScores, thirdButton: $thirdButton,appSettings: $appSettings).tag(Pages.controlPanel)
+            MainView(mainStopwatch: mainStopwatch, homeScores: $homeScores, awayScores: $awayScores, thirdButton: $thirdButton,appSettings: $appSettings).tag(Pages.mainView)
+            //GoalListView(homeScores: $homeScores, awayScores: $awayScores, thirdButton: $thirdButton, appSettings: $appSettings).tag(Pages.goalListView)
             
             
         }
@@ -112,7 +153,7 @@ struct ControlPanel: View {
     @ObservedObject var mainStopwatch: Stopwatch
     @Binding var homeScores: keepScore
     @Binding var awayScores: keepScore
-    @Binding var tekkers: keepScore
+    @Binding var thirdButton: keepScore
     @Binding var appSettings: globalSettings
     @State  var timelistIsPresented = false
     @State  var settingsIsPresented = false
@@ -146,8 +187,8 @@ struct ControlPanel: View {
                         homeScores.times = [:]
                         awayScores.score = 0
                         awayScores.times = [:]
-                        tekkers.score = 0
-                        tekkers.times = [:]
+                        thirdButton.score = 0
+                        thirdButton.times = [:]
                     }) {
                         Image(systemName: "gobackward")
                     }
@@ -184,20 +225,12 @@ struct ControlPanel: View {
                         .fullScreenCover(isPresented:  $timelistIsPresented, content:{
                             
                             
-                            GoalList(homeScores: $homeScores,awayScores: $awayScores, appSettings: $appSettings)
+                            GoalList(homeScores: $homeScores,awayScores: $awayScores, thirdButton: $thirdButton, appSettings: $appSettings)
                         }
                         )
                 }
                 
-                HStack{
-                    
-                    
-                    
-                    
-                    }
-                
-                
-            }
+            }.frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         
     }
@@ -207,19 +240,19 @@ struct MainView: View {
     @ObservedObject var mainStopwatch: Stopwatch
     @Binding var homeScores: keepScore
     @Binding var awayScores: keepScore
-    @Binding var tekkers: keepScore
+    @Binding var thirdButton: keepScore
     @Binding var appSettings: globalSettings
 
     var body: some View {
         VStack {
             HStack{
-                Text("\(tekkers.score)").font(.system(size: 15))
+                Text("\(thirdButton.score)").font(.system(size: 15))
                     .frame(alignment: .leading)
                 Text(elapsedTimeStr(timeInterval: mainStopwatch.elapsedTime))
                     .font(.system(size: 16, design: .monospaced))
                     .frame(maxWidth: .infinity, alignment: .center)
                 Spacer()
-                Text("\(tekkers.score)").font(.system(size: 15))
+                Text("\(thirdButton.score)").font(.system(size: 15))
                     .frame( alignment: .trailing)
             }
                 Divider()
@@ -244,7 +277,7 @@ struct MainView: View {
         HStack {
             Button(action: {
                 homeScores.score += 1
-                homeScores.times[homeScores.score] = [String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),"\(mainStopwatch.elapsedTime)"]
+                homeScores.times[homeScores.score] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),mainStopwatch.elapsedTime)
                 //let currentScore = getscore()
                 //newGoal(scoreOrTek: currentScore)
                 
@@ -258,8 +291,8 @@ struct MainView: View {
                 .disabled(!mainStopwatch.isRunning)
             
             Button(action: {
-                tekkers.score += 1
-                tekkers.times[tekkers.score] = [String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),"\(mainStopwatch.elapsedTime)"]
+                thirdButton.score += 1
+                thirdButton.times[thirdButton.score] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
                 //let currentScore = getscore()
                 //newGoal(scoreOrTek: currentScore)
                 
@@ -274,7 +307,7 @@ struct MainView: View {
             
             Button(action: {
                 awayScores.score += 1
-                awayScores.times[awayScores.score] = [String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),"\(mainStopwatch.elapsedTime)"]
+                awayScores.times[awayScores.score] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
                 //let currentScore = getscore()
                 //newGoal(scoreOrTek: currentScore)
                 
@@ -288,27 +321,14 @@ struct MainView: View {
                 .disabled(!mainStopwatch.isRunning)
             
         }
-            HStack{
-                Button(action: {
-                    print("Home:")
-                    print(homeScores.times)
-                    print("Away:")
-                    print(awayScores.times)
-                    print("Teks:")
-                    print(tekkers.times)
-                    print("TimeDelay:")
-                    print(appSettings.timeDelay)
-                    
-                    
-                }, label: {
-                    Text("print")
-                }).controlSize(.mini)
-                    .font(.system(size: 9))
-                
-            }
             
             
-        }.padding().background(Color(red: 190/255, green: 39/255, blue: 51/255))
+            
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .edgesIgnoringSafeArea(.all)
+        .padding()
+        .background(Color(red: 190/255, green: 39/255, blue: 51/255))
     }
 }
 
