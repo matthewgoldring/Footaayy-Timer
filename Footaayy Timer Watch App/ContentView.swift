@@ -14,7 +14,7 @@ struct keepScore{
             print("\(self.teamName) have scored \(score)")
                 }
     }
-    var times = [Int: String](){
+    var times = [Int: [String]](){
         didSet {
                     print("Goal Times:  \(times)")
                 }
@@ -244,7 +244,7 @@ struct MainView: View {
         HStack {
             Button(action: {
                 homeScores.score += 1
-                homeScores.times[homeScores.score] = String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay)))
+                homeScores.times[homeScores.score] = [String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),"\(mainStopwatch.elapsedTime)"]
                 //let currentScore = getscore()
                 //newGoal(scoreOrTek: currentScore)
                 
@@ -259,7 +259,7 @@ struct MainView: View {
             
             Button(action: {
                 tekkers.score += 1
-                tekkers.times[tekkers.score] = String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay)))
+                tekkers.times[tekkers.score] = [String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),"\(mainStopwatch.elapsedTime)"]
                 //let currentScore = getscore()
                 //newGoal(scoreOrTek: currentScore)
                 
@@ -274,7 +274,7 @@ struct MainView: View {
             
             Button(action: {
                 awayScores.score += 1
-                awayScores.times[awayScores.score] = String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay)))
+                awayScores.times[awayScores.score] = [String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),"\(mainStopwatch.elapsedTime)"]
                 //let currentScore = getscore()
                 //newGoal(scoreOrTek: currentScore)
                 
