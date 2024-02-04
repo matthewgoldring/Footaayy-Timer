@@ -45,7 +45,6 @@
 		4820F68C2B6A7D1700ADDD52 = {
 			isa = PBXGroup;
 			children = (
-				48E870042B7028E5005DB59F /* GoalListView.swift */,
 				4820F6972B6A7D1700ADDD52 /* Footaayy Timer Watch App */,
 				4820F6962B6A7D1700ADDD52 /* Products */,
 			);
@@ -63,6 +62,7 @@
 			isa = PBXGroup;
 			children = (
 				4820F6982B6A7D1700ADDD52 /* Footaayy_TimerApp.swift */,
+				48E870042B7028E5005DB59F /* GoalListView.swift */,
 				4820F69A2B6A7D1700ADDD52 /* ContentView.swift */,
 				4809AF6D2B6F9786000A1417 /* GoalList.swift */,
 				4809AF4F2B6C17C4000A1417 /* SettingsPage.swift */,

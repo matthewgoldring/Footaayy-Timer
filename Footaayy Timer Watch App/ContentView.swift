@@ -16,7 +16,7 @@ struct keepScore{
     }
     var times = [Int: (String, Double)](){
         didSet {
-                    print("Goal Times:  \(times)")
+                    print("Goal Times \(self.teamName):  \(times)")
                 }
     }
 }
@@ -137,7 +137,7 @@ struct ContentView: View {
             //SettingsPage(homeScores: $homeScores)
             ControlPanel(mainStopwatch: mainStopwatch, homeScores: $homeScores, awayScores: $awayScores, thirdButton: $thirdButton,appSettings: $appSettings).tag(Pages.controlPanel)
             MainView(mainStopwatch: mainStopwatch, homeScores: $homeScores, awayScores: $awayScores, thirdButton: $thirdButton,appSettings: $appSettings).tag(Pages.mainView)
-            //GoalListView(homeScores: $homeScores, awayScores: $awayScores, thirdButton: $thirdButton, appSettings: $appSettings).tag(Pages.goalListView)
+            GoalListView(homeScores: $homeScores, awayScores: $awayScores, thirdButton: $thirdButton, appSettings: $appSettings).tag(Pages.goalListView)
             
             
         }
@@ -217,7 +217,6 @@ struct ControlPanel: View {
                     
                     
                     Button(action: {
-                        print(homeScores.teamName)
                         timelistIsPresented.toggle()
                     }) {
                         Image(systemName: "list.clipboard")
@@ -259,13 +258,13 @@ struct MainView: View {
             HStack {
                 Text("\(homeScores.teamName)").font(.system(size: 15))
                 
-                Text(String("\(homeScores.score)"))
+                Text(String("\(homeScores.times.count)"))
                     .fontWeight(.bold)
                     .font(.system(size: 25, design: .monospaced))
                 
                 Text("-")
                 
-                Text(String("\(awayScores.score)"))
+                Text(String("\(awayScores.times.count)"))
                     .fontWeight(.bold)
                     .font(.system(size: 25, design: .monospaced))
                 
@@ -276,10 +275,9 @@ struct MainView: View {
             
         HStack {
             Button(action: {
-                homeScores.score += 1
-                homeScores.times[homeScores.score] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),mainStopwatch.elapsedTime)
-                //let currentScore = getscore()
-                //newGoal(scoreOrTek: currentScore)
+                //homeScores.score += 1
+                let homeScoreCount = homeScores.times.count + 1
+                homeScores.times[homeScoreCount] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),mainStopwatch.elapsedTime)
                 
                 
             }){
@@ -293,8 +291,6 @@ struct MainView: View {
             Button(action: {
                 thirdButton.score += 1
                 thirdButton.times[thirdButton.score] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
-                //let currentScore = getscore()
-                //newGoal(scoreOrTek: currentScore)
                 
                 
             }){
@@ -306,10 +302,9 @@ struct MainView: View {
                 .disabled(!mainStopwatch.isRunning)
             
             Button(action: {
-                awayScores.score += 1
-                awayScores.times[awayScores.score] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
-                //let currentScore = getscore()
-                //newGoal(scoreOrTek: currentScore)
+                //awayScores.score += 1
+                let awayScoreCount = awayScores.times.count + 1
+                awayScores.times[awayScoreCount] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
                 
                 
             }){
