@@ -27,7 +27,7 @@ struct GoalList: View {
                 
                 let mergedGoals = mergeAndSortGoals(team1Goals: homeScores.times, team2Goals: awayScores.times)
                 
-                let thirdButtonData = formatThirdButton(thirdButtonData: thirdButton.times,thirdButtonLabel: "Tekkers")
+                let thirdButtonData = formatThirdButton(thirdButtonData: thirdButton.times,thirdButtonLabel: appSettings.thirdButtonText)
                 
                 let goalsWithThirdButton = mergedGoals.merging(thirdButtonData) { (existing, new) in
                     return existing // If keys conflict, use the value from dict1

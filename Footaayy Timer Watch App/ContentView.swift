@@ -6,18 +6,13 @@ struct keepScore{
     var teamName: String
     
     init(teamName: String) {
-            self.teamName = teamName
-        }
-    
-    var score: Int = 0 {
-        didSet {
-            print("\(self.teamName) have scored \(score)")
-                }
+        self.teamName = teamName
     }
+    
     var times = [Int: (String, Double)](){
         didSet {
-                    print("Goal Times \(self.teamName):  \(times)")
-                }
+            print("Goal Times \(self.teamName):  \(times)")
+        }
     }
 }
 
@@ -32,10 +27,10 @@ struct globalSettings{
     //var homeColourText: Color = .white
     //var awayColourText: Color = .white
     //var keeperChangeTime: Int = 8
-    //var thirdButtonToggle: true
-    //var thirdButtonText: "Tekkers"
-    //var thirdButtonIcon: "thermometer.high"
-    //var thirdButtonColour: Color = .orange
+    var thirdButtonToggle: Bool = true
+    var thirdButtonText: String = "Tekkers"
+    //var thirdButtonIcon: String = "thermometer.high"
+    var thirdButtonColour: Color = .orange
     
 }
 
@@ -51,7 +46,7 @@ func watchTimeToReadable(from timeAsString: Float16, timeDelay: Double) -> Strin
 }
 
 func elapsedTimeStr(timeInterval: TimeInterval) -> String {
-   return formatter.string(from: timeInterval) ?? ""
+    return formatter.string(from: timeInterval) ?? ""
 }
 
 func formatThirdButton(thirdButtonData: [Int: (String, Double)], thirdButtonLabel: String) -> [Double:String] {
@@ -60,14 +55,13 @@ func formatThirdButton(thirdButtonData: [Int: (String, Double)], thirdButtonLabe
         
         let goalTime = thirdButtonTimes.1
         let formattedTime = thirdButtonTimes.0
-        
         let completeGoalsString = "\(thirdButtonLabel) - (\(formattedTime))"
         
         thirdButtonFormattedData[goalTime] = completeGoalsString
     }
-
+    
     return thirdButtonFormattedData
-
+    
 }
 
 func mergeAndSortGoals(team1Goals: [Int: (String, Double)], team2Goals: [Int: (String, Double)]) -> [Double:String] {
@@ -85,7 +79,6 @@ func mergeAndSortGoals(team1Goals: [Int: (String, Double)], team2Goals: [Int: (S
         }
         
         let team2Score = filteredTeam1ScoreTimes.count
-        
         let completeGoalsString = "\(team1Score) - \(team2Score) (\(formattedTime))"
         
         mergedGoals[goalTime] = completeGoalsString
@@ -104,7 +97,6 @@ func mergeAndSortGoals(team1Goals: [Int: (String, Double)], team2Goals: [Int: (S
         }
         
         let team1Score = filteredTeam2ScoreTimes.count
-        
         let completeGoalsString = "\(team1Score) - \(team2Score) (\(formattedTime))"
         
         mergedGoals[goalTime] = completeGoalsString
@@ -112,15 +104,15 @@ func mergeAndSortGoals(team1Goals: [Int: (String, Double)], team2Goals: [Int: (S
     
     return mergedGoals
 }
-    
+
 var formatter: DateComponentsFormatter = {
-       let formatter = DateComponentsFormatter()
-       formatter.unitsStyle = .positional // Use the appropriate positioning for the current locale
-       formatter.allowedUnits = [ .hour, .minute, .second ] // Units to display in the formatted string
-       formatter.zeroFormattingBehavior = [ .pad ] // Pad with zeroes where appropriate for the locale
-       formatter.allowsFractionalUnits = true
-       return formatter
-   }()
+    let formatter = DateComponentsFormatter()
+    formatter.unitsStyle = .positional // Use the appropriate positioning for the current locale
+    formatter.allowedUnits = [ .hour, .minute, .second ] // Units to display in the formatted string
+    formatter.zeroFormattingBehavior = [ .pad ] // Pad with zeroes where appropriate for the locale
+    formatter.allowsFractionalUnits = true
+    return formatter
+}()
 
 
 struct ContentView: View {
@@ -130,23 +122,20 @@ struct ContentView: View {
     @State var awayScores = keepScore(teamName: "Away")
     @State var thirdButton = keepScore(teamName: "Tekkers")
     @State private var selectedTab: Pages = .mainView
-
+    
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            //SettingsPage(homeScores: $homeScores)
             ControlPanel(mainStopwatch: mainStopwatch, homeScores: $homeScores, awayScores: $awayScores, thirdButton: $thirdButton,appSettings: $appSettings).tag(Pages.controlPanel)
             MainView(mainStopwatch: mainStopwatch, homeScores: $homeScores, awayScores: $awayScores, thirdButton: $thirdButton,appSettings: $appSettings).tag(Pages.mainView)
             GoalListView(homeScores: $homeScores, awayScores: $awayScores, thirdButton: $thirdButton, appSettings: $appSettings).tag(Pages.goalListView)
-            
-            
         }
     }
     
 }
-    
-            
-            
+
+
+
 
 
 struct ControlPanel: View {
@@ -162,77 +151,76 @@ struct ControlPanel: View {
         return Image(systemName: mainStopwatch.isRunning ? "pause":"figure.soccer")
     }
     var body: some View {
-            VStack {
+        VStack {
+            
+            if (mainStopwatch.elapsedTime == 0) {
+                Text("Footaayy Timer")
+            } else {
+                Text(mainStopwatch.isRunning ? "Kicked Off":"Paused")
                 
-                if (mainStopwatch.elapsedTime == 0) {
-                    Text("Footaayy Timer")
-                } else {
-                    Text(mainStopwatch.isRunning ? "Kicked Off":"Paused")
-                    
+            }
+            
+            
+            
+            HStack{
+                
+                Button(action: {
+                    mainStopwatch.isRunning.toggle()
+                }) {
+                    playPauseImage
+                }.font(.title2)
+                
+                Button(action: {
+                    mainStopwatch.reset()
+                    homeScores.times = [:]
+                    awayScores.times = [:]
+                    thirdButton.times = [:]
+                }) {
+                    Image(systemName: "gobackward")
                 }
+                .disabled(mainStopwatch.isRunning)
+                .foregroundColor(mainStopwatch.isRunning ? .gray : .white)
+                .font(.title2)
                 
+            }
+            
+            HStack{
                 
-                
-                HStack{
+                Button(action: {
+                    settingsIsPresented.toggle()
+                }) {
+                    Image(systemName: "gear")
+                }
+                .font(.title2)
+                .foregroundColor(!(mainStopwatch.elapsedTime == 0) ? .gray : .white)
+                .disabled(!(mainStopwatch.elapsedTime == 0))
+                .fullScreenCover(isPresented:  $settingsIsPresented, content:{
                     
-                    Button(action: {
-                        mainStopwatch.isRunning.toggle()
-                    }) {
-                        playPauseImage
-                    }.font(.title2)
                     
-                    Button(action: {
-                        mainStopwatch.reset()
-                        homeScores.score = 0
-                        homeScores.times = [:]
-                        awayScores.score = 0
-                        awayScores.times = [:]
-                        thirdButton.score = 0
-                        thirdButton.times = [:]
-                    }) {
-                        Image(systemName: "gobackward")
-                    }
+                    SettingsPage(homeScores: $homeScores,awayScores: $awayScores, appSettings: $appSettings).navigationTitle("Settings").frame(maxWidth: .infinity, maxHeight: .infinity).background(.black)}
+                                 
+                )
+                
+                
+                Button(action: {
+                    timelistIsPresented.toggle()
+                }) {
+                    Image(systemName: "list.clipboard")
+                }.font(.title2)
                     .disabled(mainStopwatch.isRunning)
                     .foregroundColor(mainStopwatch.isRunning ? .gray : .white)
-                    .font(.title2)
-                    
-                }
-                
-                HStack{
-                    
-                    Button(action: {
-                        settingsIsPresented.toggle()
-                    }) {
-                        Image(systemName: "gear")
+                    .fullScreenCover(isPresented:  $timelistIsPresented, content:{
+                        
+                        
+                        GoalList(homeScores: $homeScores,awayScores: $awayScores, thirdButton: $thirdButton, appSettings: $appSettings)
                     }
-                    .font(.title2)
-                    .foregroundColor(!(mainStopwatch.elapsedTime == 0) ? .gray : .white)
-                    .disabled(!(mainStopwatch.elapsedTime == 0))
-                    .fullScreenCover(isPresented:  $settingsIsPresented, content:{
-                            
-                            
-                            SettingsPage(homeScores: $homeScores,awayScores: $awayScores, appSettings: $appSettings).navigationTitle("Settings").frame(maxWidth: .infinity, maxHeight: .infinity).background(.black)}
-                                         
-                        )
-                    
-                    
-                    Button(action: {
-                        timelistIsPresented.toggle()
-                    }) {
-                        Image(systemName: "list.clipboard")
-                    }.font(.title2)
-                        .fullScreenCover(isPresented:  $timelistIsPresented, content:{
-                            
-                            
-                            GoalList(homeScores: $homeScores,awayScores: $awayScores, thirdButton: $thirdButton, appSettings: $appSettings)
-                        }
-                        )
-                }
-                
-            }.frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-        
+                    )
+            }
+            
+        }.frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+    
+}
 
 
 struct MainView: View {
@@ -241,20 +229,23 @@ struct MainView: View {
     @Binding var awayScores: keepScore
     @Binding var thirdButton: keepScore
     @Binding var appSettings: globalSettings
-
+    
     var body: some View {
         VStack {
             HStack{
-                Text("\(thirdButton.score)").font(.system(size: 15))
+                Text("\(thirdButton.times.count)").font(.system(size: 15))
                     .frame(alignment: .leading)
+                Spacer()
                 Text(elapsedTimeStr(timeInterval: mainStopwatch.elapsedTime))
                     .font(.system(size: 16, design: .monospaced))
                     .frame(maxWidth: .infinity, alignment: .center)
                 Spacer()
-                Text("\(thirdButton.score)").font(.system(size: 15))
-                    .frame( alignment: .trailing)
+                if appSettings.thirdButtonToggle {
+                    Text("\(thirdButton.times.count)").font(.system(size: 15))
+                        .frame( alignment: .trailing)
+                }
             }
-                Divider()
+            Divider()
             HStack {
                 Text("\(homeScores.teamName)").font(.system(size: 15))
                 
@@ -273,52 +264,54 @@ struct MainView: View {
             }
             Divider()
             
-        HStack {
-            Button(action: {
-                //homeScores.score += 1
-                let homeScoreCount = homeScores.times.count + 1
-                homeScores.times[homeScoreCount] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),mainStopwatch.elapsedTime)
+            HStack {
+                Button(action: {
+                    let homeScoreCount = homeScores.times.count + 1
+                    homeScores.times[homeScoreCount] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),mainStopwatch.elapsedTime)
+                }){
+                    Image(systemName: "soccerball.inverse")
+                }.foregroundColor(.white)
+                    .font(.title)
+                    .background(appSettings.homeColour)
+                    .cornerRadius(100)
+                    .disabled(!mainStopwatch.isRunning)
+                    .clipShape(Circle())
                 
                 
-            }){
-                Image(systemName: "soccerball.inverse")
-            }.foregroundColor(.white)
-                .font(.title)
-                .background(appSettings.homeColour)
-                .cornerRadius(100)
-                .disabled(!mainStopwatch.isRunning)
-            
-            Button(action: {
-                thirdButton.score += 1
-                thirdButton.times[thirdButton.score] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
+                
+                if appSettings.thirdButtonToggle {
+                    
+                    Button(action: {
+                        let thirdButtonCount = thirdButton.times.count + 1
+                        thirdButton.times[thirdButtonCount] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
+                    }){
+                        Image(systemName: "thermometer.high")
+                    }.foregroundColor(.white)
+                        .font(.title)
+                        .background(appSettings.thirdButtonColour)
+                        .cornerRadius(100)
+                        .disabled(!mainStopwatch.isRunning)
+                        .clipShape(Circle())
+                    
+                }
                 
                 
-            }){
-                Image(systemName: "thermometer.high")
-            }.foregroundColor(.white)
-                .font(.title)
-                .background(Color.orange)
-                .cornerRadius(100)
-                .disabled(!mainStopwatch.isRunning)
-            
-            Button(action: {
-                //awayScores.score += 1
-                let awayScoreCount = awayScores.times.count + 1
-                awayScores.times[awayScoreCount] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
+                
+                Button(action: {
+                    let awayScoreCount = awayScores.times.count + 1
+                    awayScores.times[awayScoreCount] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
+                }){
+                    Image(systemName: "soccerball.inverse")
+                }.foregroundColor(.white)
+                    .font(.title)
+                    .background(appSettings.awayColour)
+                    .cornerRadius(100)
+                    .disabled(!mainStopwatch.isRunning)
+                    .clipShape(Circle())
                 
                 
-            }){
-                Image(systemName: "soccerball.inverse")
-            }.foregroundColor(.white)
-                .font(.title)
-                .background(appSettings.awayColour)
-                .cornerRadius(100)
-                .disabled(!mainStopwatch.isRunning)
-            
-        }
-            
-            
-            
+
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .edgesIgnoringSafeArea(.all)
@@ -329,5 +322,5 @@ struct MainView: View {
 
 #Preview {
     ContentView()
-       
+    
 }

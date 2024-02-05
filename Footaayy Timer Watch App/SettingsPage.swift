@@ -84,10 +84,33 @@ struct SettingsPage: View {
                     SettingItems(settingItem: "Timer Delay (Seconds)", settingValue: String(appSettings.timeDelay))
                 }
                 
+                SettingItems(settingItem: "Enable Third Button", settingValue: $appSettings.thirdButtonToggle)
                 
                 
-                
-                
+                if appSettings.thirdButtonToggle {
+                    
+                    NavigationLink{
+                        TextField("Third Button Text", text:$appSettings.thirdButtonText)
+                    } label: {
+                        SettingItems(settingItem: "Third Button Text", settingValue: appSettings.thirdButtonText)
+                    }
+                    
+                    NavigationLink{
+                        Picker("Third Button Colour", selection: $appSettings.thirdButtonColour){
+                            ForEach(colorChoices.keys.sorted(by: { $0.description < $1.description }), id: \.self) { color in
+                                HStack{
+                                    Rectangle()
+                                        .fill(color)
+                                        .frame(width: 50, height: 30)
+                                        .cornerRadius(5)
+                                        .tag(color)
+                                    Text(colorChoices[color]!)
+                                }
+                            }}
+                    } label: {
+                        SettingItems(settingItem: "Third Button Colour", settingValue: colorChoices[appSettings.thirdButtonColour]!)}
+                    
+                }
                 
                 Button(action: {
                     homeScores.teamName = "Home"
@@ -98,6 +121,8 @@ struct SettingsPage: View {
                     //timeDelay = appSettings.timeDelay
                     appSettings.matchLocation = "Anfield"
                     //locationName = appSettings.matchLocation
+                    appSettings.thirdButtonToggle = true
+                    appSettings.thirdButtonText = "Tekkers"
                     
                 }, label: {
                     Text("Reset Settings")
