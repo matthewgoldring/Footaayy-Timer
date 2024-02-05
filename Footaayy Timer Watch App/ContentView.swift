@@ -39,11 +39,11 @@ enum Pages {
     case controlPanel, mainView, goalListView
 }
 
-func watchTimeToReadable(from timeAsString: Float16, timeDelay: Double) -> String {
-    let goalTime = Double(round(100 * timeAsString) / 100)
-    let goalVideoTime = (goalTime - timeDelay)
-    let goalVideoTimeFormatted = elapsedTimeStr(timeInterval: goalVideoTime)
-    return String(goalVideoTimeFormatted)
+func watchTimeToReadable(from elapsedTime: Double, timeDelay: Double) -> String {
+    //let goalTime = Double(round(100 * elapsedTime) / 100)
+    let adjustedTimeWithDelay = elapsedTime - timeDelay
+    let formattedTime = elapsedTimeStr(timeInterval: adjustedTimeWithDelay)
+    return String(formattedTime)
 }
 
 func elapsedTimeStr(timeInterval: TimeInterval) -> String {
@@ -242,41 +242,60 @@ struct MainView: View {
     var body: some View {
         VStack {
             HStack{
-                Text("\(thirdButton.times.count)").font(.system(size: 15))
-                    .frame(alignment: .leading)
+                Button(action: {}){
+                    Image(systemName: "hand.wave.fill")
+                        .resizable()
+                        .scaledToFit()
+                }
+                .frame(width: 30)
+                .controlSize(.mini)
+                .foregroundColor(.white)
+                .clipShape(Circle())
+                
                 Spacer()
+                
                 Text(elapsedTimeStr(timeInterval: mainStopwatch.elapsedTime))
                     .font(.system(size: 16, design: .monospaced))
                     .frame(maxWidth: .infinity, alignment: .center)
+                
                 Spacer()
-                if appSettings.thirdButtonToggle {
-                    Text("\(thirdButton.times.count)").font(.system(size: 15))
-                        .frame( alignment: .trailing)
-                }
+                
+                Text("\(thirdButton.times.count)")
+                    .font(.system(size: 15))
+                    .frame(width: 30)
+                
             }
+            
             Divider()
+            
             HStack {
-                Text("\(homeScores.teamName)").font(.system(size: 15))
+                Text("\(homeScores.teamName)")
+                    .font(.system(size: 15))
+                    .frame(width: 44)
                 
-                Text(String("\(homeScores.times.count)"))
-                    .fontWeight(.bold)
-                    .font(.system(size: 25, design: .monospaced))
+                HStack{
+                    Text(String("\(homeScores.times.count)"))
+                        .fontWeight(.bold)
+                        .font(.system(size: 25, design: .monospaced))
+                    
+                    Text("-")
+                    
+                    Text(String("\(awayScores.times.count)"))
+                        .fontWeight(.bold)
+                        .font(.system(size: 25, design: .monospaced))
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
                 
-                Text("-")
-                
-                Text(String("\(awayScores.times.count)"))
-                    .fontWeight(.bold)
-                    .font(.system(size: 25, design: .monospaced))
-                
-                Text("\(awayScores.teamName)").font(.system(size: 15))
-                
+                Text("\(awayScores.teamName)")
+                    .font(.system(size: 15))
+                    .frame(width: 44)
             }
             Divider()
             
             HStack {
                 Button(action: {
                     let homeScoreCount = homeScores.times.count + 1
-                    homeScores.times[homeScoreCount] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),mainStopwatch.elapsedTime)
+                    homeScores.times[homeScoreCount] = (String(watchTimeToReadable(from: Double(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),mainStopwatch.elapsedTime)
                 }){
                     Image(systemName: "soccerball.inverse")
                 }.foregroundColor(.white)
@@ -292,7 +311,7 @@ struct MainView: View {
                     
                     Button(action: {
                         let thirdButtonCount = thirdButton.times.count + 1
-                        thirdButton.times[thirdButtonCount] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
+                        thirdButton.times[thirdButtonCount] = (String(watchTimeToReadable(from: Double(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
                     }){
                         Image(systemName: appSettings.thirdButtonIcon)
                     }.foregroundColor(.white)
@@ -308,7 +327,7 @@ struct MainView: View {
                 
                 Button(action: {
                     let awayScoreCount = awayScores.times.count + 1
-                    awayScores.times[awayScoreCount] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
+                    awayScores.times[awayScoreCount] = (String(watchTimeToReadable(from: Double(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
                 }){
                     Image(systemName: "soccerball.inverse")
                 }.foregroundColor(.white)
@@ -321,7 +340,14 @@ struct MainView: View {
                 
 
             }
+//            HStack{
+//                if appSettings.thirdButtonToggle {
+//                    Text("\(thirdButton.times.count)").font(.system(size: 15))
+//                        .frame( alignment: .trailing)
+//                }
+//            }.frame(height: 1)
         }
+        
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .edgesIgnoringSafeArea(.all)
         .padding()

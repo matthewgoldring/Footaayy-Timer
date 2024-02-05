@@ -91,10 +91,7 @@ struct GoalListView: View {
         var updatedDictionary = [Int: (String, Double)]()
         
         if let deletedIndex = indices.first {
-            print(deletedIndex)
             for (oldKey, value) in dictionary {
-                print(oldKey)
-                print(value)
                 if oldKey > deletedIndex + 1 {
                     // Update keys greater than the deleted goal number
                     let newKey = oldKey - 1
