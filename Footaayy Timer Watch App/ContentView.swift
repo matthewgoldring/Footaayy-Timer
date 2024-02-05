@@ -26,6 +26,7 @@ struct globalSettings{
     var matchLocation: String = "Anfield"
     //var homeColourText: Color = .white
     //var awayColourText: Color = .white
+    //var includeKeeperChange: Bool = true
     //var keeperChangeTime: Int = 8
     var thirdButtonToggle: Bool = true
     var thirdButtonText: String = "Tekkers"
@@ -165,12 +166,15 @@ struct ControlPanel: View {
             
             
             HStack{
+                let resetDisabledCondition = mainStopwatch.isRunning || (mainStopwatch.elapsedTime == 0)
+                
                 
                 Button(action: {
                     mainStopwatch.isRunning.toggle()
                 }) {
                     playPauseImage
                 }.font(.title2)
+                
                 
                 Button(action: {
                     mainStopwatch.reset()
@@ -180,13 +184,16 @@ struct ControlPanel: View {
                 }) {
                     Image(systemName: "gobackward")
                 }
-                .disabled(mainStopwatch.isRunning)
-                .foregroundColor(mainStopwatch.isRunning ? .gray : .white)
+                .disabled(resetDisabledCondition)
+                .foregroundColor(resetDisabledCondition ? .gray : .white)
                 .font(.title2)
                 
             }
             
             HStack{
+                
+                let settingsDisabledCondition = !(mainStopwatch.elapsedTime == 0)
+                let listDisabledCondition = mainStopwatch.isRunning || (mainStopwatch.elapsedTime == 0)
                 
                 Button(action: {
                     settingsIsPresented.toggle()
@@ -194,8 +201,8 @@ struct ControlPanel: View {
                     Image(systemName: "gear")
                 }
                 .font(.title2)
-                .foregroundColor(!(mainStopwatch.elapsedTime == 0) ? .gray : .white)
-                .disabled(!(mainStopwatch.elapsedTime == 0))
+                .foregroundColor(settingsDisabledCondition ? .gray : .white)
+                .disabled(settingsDisabledCondition)
                 .fullScreenCover(isPresented:  $settingsIsPresented, content:{
                     
                     
@@ -209,8 +216,8 @@ struct ControlPanel: View {
                 }) {
                     Image(systemName: "list.clipboard")
                 }.font(.title2)
-                    .disabled(mainStopwatch.isRunning)
-                    .foregroundColor(mainStopwatch.isRunning ? .gray : .white)
+                    .disabled(listDisabledCondition)
+                    .foregroundColor(listDisabledCondition ? .gray : .white)
                     .fullScreenCover(isPresented:  $timelistIsPresented, content:{
                         
                         
