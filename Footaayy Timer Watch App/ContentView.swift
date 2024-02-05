@@ -30,7 +30,7 @@ struct globalSettings{
     //var keeperChangeTime: Int = 8
     var thirdButtonToggle: Bool = true
     var thirdButtonText: String = "Tekkers"
-    //var thirdButtonIcon: String = "thermometer.high"
+    var thirdButtonIcon: String = "thermometer.high"
     var thirdButtonColour: Color = .orange
     
 }
@@ -294,7 +294,7 @@ struct MainView: View {
                         let thirdButtonCount = thirdButton.times.count + 1
                         thirdButton.times[thirdButtonCount] = (String(watchTimeToReadable(from: Float16(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
                     }){
-                        Image(systemName: "thermometer.high")
+                        Image(systemName: appSettings.thirdButtonIcon)
                     }.foregroundColor(.white)
                         .font(.title)
                         .background(appSettings.thirdButtonColour)

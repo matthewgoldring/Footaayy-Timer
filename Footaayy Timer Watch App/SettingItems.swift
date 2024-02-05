@@ -18,7 +18,11 @@ struct SettingItems: View {
                     .frame(alignment: .leading)
                 Spacer()
                 
-                if let stringValue = settingValue as? String {
+                if settingItem.contains("Icon"){
+                    let stringValue = settingValue as? String
+                    Image(systemName:String(stringValue!))
+                        .foregroundColor(.blue)
+                } else if let stringValue = settingValue as? String {
                     Text("\(stringValue)")
                         .foregroundColor(.blue)
                 } else if settingValue is Binding<Bool> {

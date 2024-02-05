@@ -19,8 +19,20 @@ struct SettingsPage: View {
         Color.blue:"Blue",
         Color.green:"Green",
         Color.black:"Black",
-        Color.orange:"Orange"
+        Color.orange:"Orange",
+        Color.white:"White"
         ]
+    
+    
+    let iconChoices: [String] = [
+        
+        "thermometer.high",
+        "snowflake",
+        "tornado",
+        "figure.dance",
+        "display"
+    
+    ]
     
     var body: some View {
         NavigationView{
@@ -110,6 +122,19 @@ struct SettingsPage: View {
                     } label: {
                         SettingItems(settingItem: "Third Button Colour", settingValue: colorChoices[appSettings.thirdButtonColour]!)}
                     
+                    
+                    NavigationLink{
+                        Picker("Third Button Icon", selection: $appSettings.thirdButtonIcon){
+                            ForEach(iconChoices.sorted(by: { $0.description < $1.description }), id: \.self) { icon in
+                                HStack{
+                                    Image(systemName:icon)
+                                    Text(icon)
+                                }
+                            }}
+                    } label: {
+                        SettingItems(settingItem: "Third Button Icon", settingValue: appSettings.thirdButtonIcon)}
+                    
+                    
                 }
                 
                 Button(action: {
@@ -122,6 +147,7 @@ struct SettingsPage: View {
                     appSettings.matchLocation = "Anfield"
                     //locationName = appSettings.matchLocation
                     appSettings.thirdButtonToggle = true
+                    appSettings.thirdButtonIcon = "thermometer.high"
                     appSettings.thirdButtonText = "Tekkers"
                     
                 }, label: {
