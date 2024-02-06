@@ -9,11 +9,12 @@ struct keepScore{
         self.teamName = teamName
     }
     
-    var times = [Int: (String, Double)](){
-        didSet {
-            print("Goal Times \(self.teamName):  \(times)")
-        }
-    }
+    var times = [Int: (String, Double)]()
+    //{
+//        didSet {
+//            print("Goal Times \(self.teamName):  \(times)")
+//        }
+//    }
 }
 
 struct globalSettings{
@@ -26,9 +27,8 @@ struct globalSettings{
     var matchLocation: String = "Anfield"
     var homeColourText: Color = .white
     var awayColourText: Color = .white
-    //var includeKeeperChange: Bool = true
-    var keeperChangeTime: Double = 7.5
-    var keeperChangeReset: Int = 450
+    var includeKeeperChange: Bool = true
+    var keeperChangeTime: Double = 1.0
     var thirdButtonToggle: Bool = true
     var thirdButtonText: String = "Tekkers"
     var thirdButtonIcon: String = "thermometer.high"
@@ -249,54 +249,63 @@ struct MainView: View {
         VStack {
             HStack{
                 
-                
-             
+                if appSettings.includeKeeperChange {
+                    
                     Button(action: {
                         
                         let currentGameTime = mainStopwatch.elapsedTime
                         
-                        keeperEndTime = currentGameTime + Double(appSettings.keeperChangeReset)
+                        keeperEndTime = currentGameTime + (appSettings.keeperChangeTime * 60)
                     }
-                    
-                    
+                           
+                           
                     ){
                         let keeperTimeLeft = Int(round(mainStopwatch.elapsedTime - keeperEndTime)) * -1
-    
                         
-                        if keeperTimeLeft < 0 || keeperTimeLeft > appSettings.keeperChangeReset {
+                        let timeLeftInMinutes = Int((Double(keeperTimeLeft) / 60))
+                        
+                        let keeperChangeSecs = Int(appSettings.keeperChangeTime * 60)
+
+                        
+                        if keeperTimeLeft < 0 || keeperTimeLeft > keeperChangeSecs {
                             
                             Image(systemName: "hand.wave.fill")
-                                .resizable()
-                                .scaledToFit()
-                           
                         }
                         
-                        else  {
-                                    Text(String(keeperTimeLeft))
-                                        .font(.system(size: 10))
-                                }
-                          
+                        else  if keeperTimeLeft < 60 {
+                            Text(String(keeperTimeLeft))
+                                .font(.system(size: 10))
+                        } else {
+                            Text(String(timeLeftInMinutes))
+                                .font(.system(size: 18))
                         }
-                    .frame(width: 37,height: 37)
-                    .controlSize(.mini)
+                        
+                    }
+                    .frame(width: 32,height: 32)
                     .foregroundColor(.white)
                     .clipShape(Circle())
                     .disabled(!mainStopwatch.isRunning)
                     
-                
-                
-                Spacer()
+                    
+                    
+                    
+                } else {
+                    Spacer().frame(width: 32, height: 32)
+                    
+                }
                 
                 Text(elapsedTimeStr(timeInterval: mainStopwatch.elapsedTime))
-                    .font(.system(size: 16, design: .monospaced))
+                    .font(.system(size: 18, design: .monospaced))
                     .frame(maxWidth: .infinity, alignment: .center)
                 
-                Spacer()
-                
-                Text("\(thirdButton.times.count)")
-                    .font(.system(size: 15))
-                    .frame(width: 37,height: 37)
-                
+                if appSettings.thirdButtonToggle {
+                    Text("\(thirdButton.times.count)")
+                        .font(.system(size: 16))
+                        .frame(width: 32,height: 32)
+                        .foregroundStyle(Color(appSettings.thirdButtonColour))
+                } else {
+                    Spacer().frame(width: 32, height: 32)
+                }
             }.frame(height: 40)
             
             Divider()
@@ -349,12 +358,13 @@ struct MainView: View {
                         thirdButton.times[thirdButtonCount] = (String(watchTimeToReadable(from: Double(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
                     }){
                         Image(systemName: appSettings.thirdButtonIcon)
-                    }.foregroundColor(.white)
-                        .font(.title)
-                        .background(appSettings.thirdButtonColour)
-                        .cornerRadius(100)
-                        .disabled(!mainStopwatch.isRunning)
-                        .clipShape(Circle())
+                    }
+                    .foregroundColor(.white)
+                    .font(.title)
+                    .background(appSettings.thirdButtonColour)
+                    .cornerRadius(100)
+                    .disabled(!mainStopwatch.isRunning)
+                    .clipShape(Circle())
                     
                 }
                 
@@ -371,16 +381,7 @@ struct MainView: View {
                     .cornerRadius(100)
                     .disabled(!mainStopwatch.isRunning)
                     .clipShape(Circle())
-                
-                
-
             }
-//            HStack{
-//                if appSettings.thirdButtonToggle {
-//                    Text("\(thirdButton.times.count)").font(.system(size: 15))
-//                        .frame( alignment: .trailing)
-//                }
-//            }.frame(height: 1)
         }
         
         .frame(maxWidth: .infinity, maxHeight: .infinity)

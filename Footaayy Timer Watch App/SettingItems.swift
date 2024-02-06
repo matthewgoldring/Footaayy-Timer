@@ -26,7 +26,6 @@ struct SettingItems: View {
                     Text("\(stringValue)")
                         .foregroundColor(.blue)
                 } else if settingValue is Binding<Bool> {
-                   //Toggle("", isOn: Binding(get: { self.settingValue as! Bool }, set: { _ in }))
                     Toggle("", isOn: settingValue as! Binding<Bool>)
                         .labelsHidden()
                 } else {

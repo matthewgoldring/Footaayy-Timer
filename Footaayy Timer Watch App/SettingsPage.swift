@@ -147,13 +147,18 @@ struct SettingsPage: View {
                     SettingItems(settingItem: "Timer Delay (Seconds)", settingValue: String(appSettings.timeDelay))
                 }
                 
-                NavigationLink{
-                    Stepper(String(format: "%.1f", appSettings.keeperChangeTime), value: $appSettings.keeperChangeTime, in: 1...25, step: 0.5)
-                        .font(.title3)
-                } label: {
-                    SettingItems(settingItem: "Keeper Change (Minutes)", settingValue: String(appSettings.keeperChangeTime))
-                }.onChange(of: appSettings.keeperChangeTime) { appSettings.keeperChangeReset = Int(appSettings.keeperChangeTime * 60)}
                 
+                SettingItems(settingItem: "Keeper Change Clock", settingValue: $appSettings.includeKeeperChange)
+                
+                if appSettings.includeKeeperChange {
+                    
+                    NavigationLink{
+                        Stepper(String(format: "%.1f", appSettings.keeperChangeTime), value: $appSettings.keeperChangeTime, in: 0.5...25, step: 0.5)
+                            .font(.title3)
+                    } label: {
+                        SettingItems(settingItem: "Keeper Change (Minutes)", settingValue: String(appSettings.keeperChangeTime))
+                    }
+                }
                 
                 SettingItems(settingItem: "Enable Third Button", settingValue: $appSettings.thirdButtonToggle)
                 
@@ -210,14 +215,12 @@ struct SettingsPage: View {
                     awayScores.teamName = "Away"
                     appSettings.awayName = awayScores.teamName
                     appSettings.timeDelay = 15
-                    //timeDelay = appSettings.timeDelay
                     appSettings.matchLocation = "Anfield"
-                    //locationName = appSettings.matchLocation
                     appSettings.thirdButtonToggle = true
                     appSettings.thirdButtonIcon = "thermometer.high"
                     appSettings.thirdButtonText = "Tekkers"
+                    appSettings.includeKeeperChange = true
                     appSettings.keeperChangeTime = 7.5
-                    appSettings.keeperChangeReset = 450
                     
                 }, label: {
                     Text("Reset Settings")
