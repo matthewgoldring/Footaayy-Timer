@@ -19,13 +19,13 @@ struct keepScore{
 struct globalSettings{
     
     var homeName: String = "Home"
-    var homeColour: Color = .blue
+    var homeColour: Color = Color(red: 5/255, green: 0/255, blue: 91/255)
     var awayName: String = "Away"
-    var awayColour: Color = .green
+    var awayColour: Color = Color(red: 1/255, green: 135/255, blue: 73/255)
     var timeDelay: Int = 15
     var matchLocation: String = "Anfield"
-    //var homeColourText: Color = .white
-    //var awayColourText: Color = .white
+    var homeColourText: Color = .white
+    var awayColourText: Color = .white
     //var includeKeeperChange: Bool = true
     var keeperChangeTime: Double = 7.5
     var keeperChangeReset: Int = 450
@@ -57,7 +57,7 @@ func formatThirdButton(thirdButtonData: [Int: (String, Double)], thirdButtonLabe
         
         let goalTime = thirdButtonTimes.1
         let formattedTime = thirdButtonTimes.0
-        let completeGoalsString = "\(thirdButtonLabel) - (\(formattedTime))"
+        let completeGoalsString = "\(thirdButtonLabel) (\(formattedTime))"
         
         thirdButtonFormattedData[goalTime] = completeGoalsString
     }
@@ -277,7 +277,7 @@ struct MainView: View {
                                 }
                           
                         }
-                    .frame(width: 40)
+                    .frame(width: 37,height: 37)
                     .controlSize(.mini)
                     .foregroundColor(.white)
                     .clipShape(Circle())
@@ -295,7 +295,7 @@ struct MainView: View {
                 
                 Text("\(thirdButton.times.count)")
                     .font(.system(size: 15))
-                    .frame(width: 40)
+                    .frame(width: 37,height: 37)
                 
             }.frame(height: 40)
             
@@ -305,6 +305,8 @@ struct MainView: View {
                 Text("\(homeScores.teamName)")
                     .font(.system(size: 15))
                     .frame(width: 44)
+                    //.background(appSettings.homeColour)
+                    //.foregroundStyle(Color(appSettings.homeColourText))
                 
                 HStack{
                     Text(String("\(homeScores.times.count)"))
@@ -331,7 +333,7 @@ struct MainView: View {
                     homeScores.times[homeScoreCount] = (String(watchTimeToReadable(from: Double(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),mainStopwatch.elapsedTime)
                 }){
                     Image(systemName: "soccerball.inverse")
-                }.foregroundColor(.white)
+                }.foregroundColor(appSettings.homeColourText)
                     .font(.title)
                     .background(appSettings.homeColour)
                     .cornerRadius(100)
@@ -363,7 +365,7 @@ struct MainView: View {
                     awayScores.times[awayScoreCount] = (String(watchTimeToReadable(from: Double(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
                 }){
                     Image(systemName: "soccerball.inverse")
-                }.foregroundColor(.white)
+                }.foregroundColor(appSettings.awayColourText)
                     .font(.title)
                     .background(appSettings.awayColour)
                     .cornerRadius(100)
