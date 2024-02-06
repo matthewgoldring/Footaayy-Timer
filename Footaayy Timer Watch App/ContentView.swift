@@ -27,7 +27,8 @@ struct globalSettings{
     //var homeColourText: Color = .white
     //var awayColourText: Color = .white
     //var includeKeeperChange: Bool = true
-    //var keeperChangeTime: Int = 8
+    var keeperChangeTime: Double = 7.5
+    var keeperChangeReset: Int = 450
     var thirdButtonToggle: Bool = true
     var thirdButtonText: String = "Tekkers"
     var thirdButtonIcon: String = "thermometer.high"
@@ -181,6 +182,7 @@ struct ControlPanel: View {
                     homeScores.times = [:]
                     awayScores.times = [:]
                     thirdButton.times = [:]
+                    
                 }) {
                     Image(systemName: "gobackward")
                 }
@@ -239,18 +241,49 @@ struct MainView: View {
     @Binding var thirdButton: keepScore
     @Binding var appSettings: globalSettings
     
+    @State var keeperEndTime: Double = -1
+    
+    
+    
     var body: some View {
         VStack {
             HStack{
-                Button(action: {}){
-                    Image(systemName: "hand.wave.fill")
-                        .resizable()
-                        .scaledToFit()
-                }
-                .frame(width: 30)
-                .controlSize(.mini)
-                .foregroundColor(.white)
-                .clipShape(Circle())
+                
+                
+             
+                    Button(action: {
+                        
+                        let currentGameTime = mainStopwatch.elapsedTime
+                        
+                        keeperEndTime = currentGameTime + Double(appSettings.keeperChangeReset)
+                    }
+                    
+                    
+                    ){
+                        let keeperTimeLeft = Int(round(mainStopwatch.elapsedTime - keeperEndTime)) * -1
+    
+                        
+                        if keeperTimeLeft < 0 || keeperTimeLeft > appSettings.keeperChangeReset {
+                            
+                            Image(systemName: "hand.wave.fill")
+                                .resizable()
+                                .scaledToFit()
+                           
+                        }
+                        
+                        else  {
+                                    Text(String(keeperTimeLeft))
+                                        .font(.system(size: 10))
+                                }
+                          
+                        }
+                    .frame(width: 40)
+                    .controlSize(.mini)
+                    .foregroundColor(.white)
+                    .clipShape(Circle())
+                    .disabled(!mainStopwatch.isRunning)
+                    
+                
                 
                 Spacer()
                 
@@ -262,9 +295,9 @@ struct MainView: View {
                 
                 Text("\(thirdButton.times.count)")
                     .font(.system(size: 15))
-                    .frame(width: 30)
+                    .frame(width: 40)
                 
-            }
+            }.frame(height: 40)
             
             Divider()
             

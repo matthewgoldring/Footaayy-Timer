@@ -96,6 +96,14 @@ struct SettingsPage: View {
                     SettingItems(settingItem: "Timer Delay (Seconds)", settingValue: String(appSettings.timeDelay))
                 }
                 
+                NavigationLink{
+                    Stepper(String(format: "%.1f", appSettings.keeperChangeTime), value: $appSettings.keeperChangeTime, in: 1...25, step: 0.5)
+                            .font(.title3)
+                } label: {
+                    SettingItems(settingItem: "Keeper Change (Minutes)", settingValue: String(appSettings.keeperChangeTime))
+                }.onChange(of: appSettings.keeperChangeTime) { appSettings.keeperChangeReset = Int(appSettings.keeperChangeTime * 60)}
+                
+                
                 SettingItems(settingItem: "Enable Third Button", settingValue: $appSettings.thirdButtonToggle)
                 
                 
@@ -134,6 +142,10 @@ struct SettingsPage: View {
                     } label: {
                         SettingItems(settingItem: "Third Button Icon", settingValue: appSettings.thirdButtonIcon)}
                     
+                   
+                    
+                    
+                    
                     
                 }
                 
@@ -149,6 +161,8 @@ struct SettingsPage: View {
                     appSettings.thirdButtonToggle = true
                     appSettings.thirdButtonIcon = "thermometer.high"
                     appSettings.thirdButtonText = "Tekkers"
+                    appSettings.keeperChangeTime = 7.5
+                    appSettings.keeperChangeReset = 450
                     
                 }, label: {
                     Text("Reset Settings")
