@@ -14,20 +14,20 @@ struct SettingsPage: View {
     @Binding var appSettings: globalSettings
     
     
-    let colorChoices: [Color: String] = [
-        Color.red:"Red",
-        Color(red: 5/255, green: 0/255, blue: 91/255):"Blue",
-        Color(red: 1/255, green: 135/255, blue: 73/255):"Green",
-        Color.black:"Black",
-        Color.orange:"Orange",
-        Color.white:"White",
-        Color.yellow:"Yellow",
-        Color(red: 202/255, green: 45/255, blue: 37/255):"LFC",
-        Color(red: 29/255, green: 91/255, blue: 164/255):"QPR",
-        Color(red: 168/255, green: 19/255, blue: 62/255):"Barca",
-        Color(red: 0/255, green: 77/255, blue: 152/255):"Barca",
-        Color(red: 122/255, green: 38/255, blue: 58/255):"WHU",
-        Color(red: 27/255, green: 177/255, blue: 231/255):"Blue"
+    let colorChoices: [String: String] = [
+        "FF0000":"Red",
+        "05005B":"Blue",
+        "018749":"Green",
+        "000000":"Black",
+        "FFA500":"Orange",
+        "FFFFFF":"White",
+        "FFFF00":"Yellow",
+        "#CA2D25": "LFC",        // Color(red: 202/255, green: 45/255, blue: 37/255)
+        "#1D5BA4": "QPR",        // Color(red: 29/255, green: 91/255, blue: 164/255)
+        "#A8133E": "Barca",      // Color(red: 168/255, green: 19/255, blue: 62/255)
+        "#004D98": "Barca",      // Color(red: 0/255, green: 77/255, blue: 152/255)
+        "#7A263A": "WHU",        // Color(red: 122/255, green: 38/255, blue: 58/255)
+        "#1BB1E7": "Blue"
     ]
     
     
@@ -63,10 +63,10 @@ struct SettingsPage: View {
                             }), id: \.self) { color in
                                 HStack{
                                     Rectangle()
-                                        .fill(color)
+                                        .fill(Color(hex:color))
                                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
                                         .cornerRadius(5)
-                                        .tag(color)
+                                        .tag(Color(hex:color))
                                 }
                             }}
                         
@@ -78,10 +78,10 @@ struct SettingsPage: View {
                             }), id: \.self) { color in
                                 HStack{
                                     Rectangle()
-                                        .fill(color)
+                                        .fill(Color(hex:color))
                                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
                                         .cornerRadius(5)
-                                        .tag(color)
+                                        .tag(Color(hex:color))
                                 }
                             }}
                     }
@@ -107,10 +107,10 @@ struct SettingsPage: View {
                             }), id: \.self) { color in
                                 HStack{
                                     Rectangle()
-                                        .fill(color)
+                                        .fill(Color(hex:color))
                                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
                                         .cornerRadius(5)
-                                        .tag(color)
+                                        .tag(Color(hex:color))
                                 }
                             }}
                         
@@ -122,10 +122,10 @@ struct SettingsPage: View {
                             }), id: \.self) { color in
                                 HStack{
                                     Rectangle()
-                                        .fill(color)
+                                        .fill(Color(hex:color))
                                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .center)
                                         .cornerRadius(5)
-                                        .tag(color)
+                                        .tag(Color(hex:color))
                                 }
                             }}
                     }
@@ -180,10 +180,10 @@ struct SettingsPage: View {
                             }), id: \.self) { color in
                                 HStack{
                                     Rectangle()
-                                        .fill(color)
+                                        .fill(Color(hex:color))
                                         .frame(width: 50, height: 30)
                                         .cornerRadius(5)
-                                        .tag(color)
+                                        .tag(Color(hex:color))
                                     Text(colorChoices[color]!)
                                 }
                             }}
@@ -231,45 +231,6 @@ struct SettingsPage: View {
             
             
         }
-        
-        //        VStack {
-        //            HStack{
-        //                VStack{
-        //                    Text("Home Name").font(.system(size: 13))
-        //                    TextField("Home Name", text:$homeName).font(.system(size: 13))
-        //                }
-        //                VStack{
-        //                    Text("Away Name").font(.system(size: 13))
-        //                    TextField("Away Name", text:$awayName).font(.system(size: 13))
-        //                }
-        //
-        //            }
-        //            .onChange(of: homeName) { homeScores.teamName = homeName}
-        //            .onChange(of: awayName) { awayScores.teamName = awayName}
-        //
-        //            HStack{
-        //                VStack{
-        //                    Text("Location").font(.system(size: 13))
-        //                    TextField("Location", text:$locationName).font(.system(size: 13))
-        //                }
-        //                VStack{
-        //                    Text("Time Delay").font(.system(size: 13))
-        //                    TextField("Time Delay", value: $timeDelay, formatter: NumberFormatter()).font(.system(size: 13))
-        //                }
-        //            }
-        //            .onChange(of: timeDelay) { appSettings.timeDelay = Int(timeDelay)}
-        //
-        //            Button(action: {
-        //                homeScores.teamName = "Home"
-        //                awayScores.teamName = "Away"
-        //                appSettings.timeDelay = 15
-        //                appSettings.matchLocation = "Anfield"
-        //
-        //            }, label: {
-        //                Text("Reset")
-        //            }).controlSize(.mini)
-        //                .font(.system(size: 9))
-        //        }
         
     }
     

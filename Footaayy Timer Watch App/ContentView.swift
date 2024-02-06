@@ -17,36 +17,25 @@ struct keepScore{
     //    }
 }
 
-struct globalSettingsTest: Codable{
+struct globalSettings: Codable{
     
     var homeName: String = "Home"
+    var homeColour: String = "05005B"
     var awayName: String = "Away"
-    var timeDelay: Int = 15
-    var includeKeeperChange: Bool = true
-    var keeperChangeTime: Double = 5.0
-    
-}
-
-struct globalSettings{
-    
-    var homeName: String = "Home"
-    var homeColour: Color = Color(red: 5/255, green: 0/255, blue: 91/255)
-    var awayName: String = "Away"
-    var awayColour: Color = Color(red: 1/255, green: 135/255, blue: 73/255)
+    var awayColour: String = "018749"
     var timeDelay: Int = 15
     var matchLocation: String = "Anfield"
-    var homeColourText: Color = .white
-    var awayColourText: Color = .white
+    var homeColourText: String = "FFFFFF"
+    var awayColourText: String = "FFFFFF"
     var includeKeeperChange: Bool = true
     var keeperChangeTime: Double = 5.0
     var thirdButtonToggle: Bool = true
     var thirdButtonText: String = "Tekkers"
     var thirdButtonIcon: String = "thermometer.high"
-    var thirdButtonColour: Color = .orange
-    var alertKeeperDone = false
-    var keeperrainaingTime: Int = -1
-    var keeperRunning = false
-    //String = "FFFFFF"
+    var thirdButtonColour: String = "FFA500"
+    var alertKeeperDone: Bool = false
+    var keeperRemainingTime: Int = -1
+    var keeperRunning: Bool = false
 }
 
 extension Color {
@@ -304,11 +293,11 @@ struct MainView: View {
                         
                         if appSettings.keeperRunning{
                             
-                            if appSettings.keeperrainaingTime < 90 {
-                                Text("\(appSettings.keeperrainaingTime)")
+                            if appSettings.keeperRemainingTime < 90 {
+                                Text("\(appSettings.keeperRemainingTime)")
                                     .font(.system(size: 10))
                             } else {
-                                Text("\(Int((Double(appSettings.keeperrainaingTime) / 60)))")
+                                Text("\(Int((Double(appSettings.keeperRemainingTime) / 60)))")
                                 .font(.system(size: 18))}
                             
                         } else {
@@ -340,7 +329,7 @@ struct MainView: View {
                     Text("\(thirdButton.times.count)")
                         .font(.system(size: 16))
                         .frame(width: 32,height: 32)
-                        .foregroundStyle(Color(appSettings.thirdButtonColour))
+                        .foregroundStyle(Color(hex:appSettings.thirdButtonColour))
                 } else {
                     Spacer().frame(width: 32, height: 32)
                 }
@@ -348,9 +337,9 @@ struct MainView: View {
             
             
                 .onChange(of: mainStopwatch.elapsedTime) {
-                    appSettings.keeperrainaingTime = Int(round(mainStopwatch.elapsedTime - keeperEndTime)) * -1
+                    appSettings.keeperRemainingTime = Int(round(mainStopwatch.elapsedTime - keeperEndTime)) * -1
                 }
-                .onChange(of: appSettings.keeperrainaingTime) {if  appSettings.keeperrainaingTime == 0 && appSettings.keeperRunning == true {
+                .onChange(of: appSettings.keeperRemainingTime) {if  appSettings.keeperRemainingTime == 0 && appSettings.keeperRunning == true {
                     appSettings.alertKeeperDone = true
                     appSettings.keeperRunning = false
                 }
@@ -394,9 +383,9 @@ struct MainView: View {
                     homeScores.times[homeScoreCount] = (String(watchTimeToReadable(from: Double(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),mainStopwatch.elapsedTime)
                 }){
                     Image(systemName: "soccerball.inverse")
-                }.foregroundColor(appSettings.homeColourText)
+                }.foregroundColor(Color(hex:appSettings.homeColourText))
                     .font(.title)
-                    .background(appSettings.homeColour)
+                    .background(Color(hex:appSettings.homeColour))
                     .cornerRadius(100)
                     .disabled(!mainStopwatch.isRunning)
                     .clipShape(Circle())
@@ -413,7 +402,7 @@ struct MainView: View {
                     }
                     .foregroundColor(.white)
                     .font(.title)
-                    .background(appSettings.thirdButtonColour)
+                    .background(Color(hex:appSettings.thirdButtonColour))
                     .cornerRadius(100)
                     .disabled(!mainStopwatch.isRunning)
                     .clipShape(Circle())
@@ -427,9 +416,9 @@ struct MainView: View {
                     awayScores.times[awayScoreCount] = (String(watchTimeToReadable(from: Double(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
                 }){
                     Image(systemName: "soccerball.inverse")
-                }.foregroundColor(appSettings.awayColourText)
+                }.foregroundColor(Color(hex:appSettings.awayColourText))
                     .font(.title)
-                    .background(Color(appSettings.awayColour))
+                    .background(Color(hex:appSettings.awayColour))
                     .cornerRadius(100)
                     .disabled(!mainStopwatch.isRunning)
                     .clipShape(Circle())
