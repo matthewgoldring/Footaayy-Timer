@@ -11,10 +11,20 @@ struct keepScore{
     
     var times = [Int: (String, Double)]()
     //{
-//        didSet {
-//            print("Goal Times \(self.teamName):  \(times)")
-//        }
-//    }
+    //        didSet {
+    //            print("Goal Times \(self.teamName):  \(times)")
+    //        }
+    //    }
+}
+
+struct globalSettingsTest: Codable{
+    
+    var homeName: String = "Home"
+    var awayName: String = "Away"
+    var timeDelay: Int = 15
+    var includeKeeperChange: Bool = true
+    var keeperChangeTime: Double = 5.0
+    
 }
 
 struct globalSettings{
@@ -28,12 +38,42 @@ struct globalSettings{
     var homeColourText: Color = .white
     var awayColourText: Color = .white
     var includeKeeperChange: Bool = true
-    var keeperChangeTime: Double = 1.0
+    var keeperChangeTime: Double = 5.0
     var thirdButtonToggle: Bool = true
     var thirdButtonText: String = "Tekkers"
     var thirdButtonIcon: String = "thermometer.high"
     var thirdButtonColour: Color = .orange
-    
+    var alertKeeperDone = false
+    var keeperrainaingTime: Int = -1
+    var keeperRunning = false
+    //String = "FFFFFF"
+}
+
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let a, r, g, b: UInt64
+        switch hex.count {
+        case 3: // RGB (12-bit)
+            (a, r, g, b) = (255, (int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
+        case 6: // RGB (24-bit)
+            (a, r, g, b) = (255, int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        case 8: // ARGB (32-bit)
+            (a, r, g, b) = (int >> 24, int >> 16 & 0xFF, int >> 8 & 0xFF, int & 0xFF)
+        default:
+            (a, r, g, b) = (1, 1, 1, 0)
+        }
+
+        self.init(
+            .sRGB,
+            red: Double(r) / 255,
+            green: Double(g) / 255,
+            blue:  Double(b) / 255,
+            opacity: Double(a) / 255
+        )
+    }
 }
 
 enum Pages {
@@ -161,9 +201,7 @@ struct ControlPanel: View {
                 Text("Footaayy Timer")
             } else {
                 Text(mainStopwatch.isRunning ? "Kicked Off":"Paused")
-                
             }
-            
             
             
             HStack{
@@ -182,6 +220,7 @@ struct ControlPanel: View {
                     homeScores.times = [:]
                     awayScores.times = [:]
                     thirdButton.times = [:]
+                    appSettings.keeperRunning = false
                     
                 }) {
                     Image(systemName: "gobackward")
@@ -256,28 +295,24 @@ struct MainView: View {
                         let currentGameTime = mainStopwatch.elapsedTime
                         
                         keeperEndTime = currentGameTime + (appSettings.keeperChangeTime * 60)
+                        
+                        appSettings.keeperRunning = true
                     }
                            
                            
                     ){
-                        let keeperTimeLeft = Int(round(mainStopwatch.elapsedTime - keeperEndTime)) * -1
                         
-                        let timeLeftInMinutes = Int((Double(keeperTimeLeft) / 60))
-                        
-                        let keeperChangeSecs = Int(appSettings.keeperChangeTime * 60)
-
-                        
-                        if keeperTimeLeft < 0 || keeperTimeLeft > keeperChangeSecs {
+                        if appSettings.keeperRunning{
                             
-                            Image(systemName: "hand.wave.fill")
-                        }
-                        
-                        else  if keeperTimeLeft < 60 {
-                            Text(String(keeperTimeLeft))
-                                .font(.system(size: 10))
+                            if appSettings.keeperrainaingTime < 90 {
+                                Text("\(appSettings.keeperrainaingTime)")
+                                    .font(.system(size: 10))
+                            } else {
+                                Text("\(Int((Double(appSettings.keeperrainaingTime) / 60)))")
+                                .font(.system(size: 18))}
+                            
                         } else {
-                            Text(String(timeLeftInMinutes))
-                                .font(.system(size: 18))
+                            Image(systemName: "hand.wave.fill")
                         }
                         
                     }
@@ -285,6 +320,7 @@ struct MainView: View {
                     .foregroundColor(.white)
                     .clipShape(Circle())
                     .disabled(!mainStopwatch.isRunning)
+                    
                     
                     
                     
@@ -298,6 +334,8 @@ struct MainView: View {
                     .font(.system(size: 18, design: .monospaced))
                     .frame(maxWidth: .infinity, alignment: .center)
                 
+                
+                
                 if appSettings.thirdButtonToggle {
                     Text("\(thirdButton.times.count)")
                         .font(.system(size: 16))
@@ -308,14 +346,28 @@ struct MainView: View {
                 }
             }.frame(height: 40)
             
+            
+                .onChange(of: mainStopwatch.elapsedTime) {
+                    appSettings.keeperrainaingTime = Int(round(mainStopwatch.elapsedTime - keeperEndTime)) * -1
+                }
+                .onChange(of: appSettings.keeperrainaingTime) {if  appSettings.keeperrainaingTime == 0 && appSettings.keeperRunning == true {
+                    appSettings.alertKeeperDone = true
+                    appSettings.keeperRunning = false
+                }
+                }
+                .alert("Keeper Change", isPresented: $appSettings.alertKeeperDone){Button("OK",role: .cancel){
+                    
+                }}
+                .sensoryFeedback(.warning, trigger: appSettings.alertKeeperDone == true)
+            
+            
+            
             Divider()
             
             HStack {
                 Text("\(homeScores.teamName)")
                     .font(.system(size: 15))
                     .frame(width: 44)
-                    //.background(appSettings.homeColour)
-                    //.foregroundStyle(Color(appSettings.homeColourText))
                 
                 HStack{
                     Text(String("\(homeScores.times.count)"))
@@ -377,7 +429,7 @@ struct MainView: View {
                     Image(systemName: "soccerball.inverse")
                 }.foregroundColor(appSettings.awayColourText)
                     .font(.title)
-                    .background(appSettings.awayColour)
+                    .background(Color(appSettings.awayColour))
                     .cornerRadius(100)
                     .disabled(!mainStopwatch.isRunning)
                     .clipShape(Circle())
