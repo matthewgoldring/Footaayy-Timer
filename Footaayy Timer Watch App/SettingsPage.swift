@@ -310,10 +310,26 @@ struct SettingsPage: View {
                 }).fullScreenCover(isPresented: $helpPresented, content:{
                     
                     ScrollView {
-                        Text("Thanks for downloading the app. This was designed for a specific purpose, so I would like to explain some features and future plans. The video time delay is designed to help when uploading goal times to YouTube. It adds a delay to the listed goal times so that the time of the build up to a goal can be captured. If you simply want to record the goal times, just make this delay 0. ")
-                                    .padding()
-                            }
-                    
+                        VStack{
+                            Text("Footaayy").font(.headline)
+                            Text("Thanks for downloading the app. This was designed for a specific purpose, so I would like to explain some features and future plans").font(.body)
+                            Spacer()
+                            Text("Main Features").font(.headline)
+                            Text("The app is to keep the score at your local 5-a-side game. You can customise the colours and names of each team and hit the goal button when each team scores. This will record the goal time and keep track of the score. There is the option to add a third button if you want to keep track of something else within the game such as hitting the post or a memorable moment. There is also an option to add in a secondary countdown timer to indicate when it is time to change the goalkeepers.").font(.body)
+                            Spacer()
+                            Text("Control Panel").font(.headline)
+                            Text("Scroll to the left screen to access the control panel. Here you can start and stop the game, and reset the time when the game is paused. You can also access the settings from here when the game is paused. Some additional settings are available only when the game is been reset. Finally, there is a list view, to see all goals and events in the game, in chronological order.").font(.body)
+                            Spacer()
+                            Text("Video Delay").font(.headline)
+                            Text("The video time delay is designed to help when uploading goal times to YouTube. It adds a delay to the listed goal times so that the time of the build up to a goal can be captured. If you simply want to record the goal times, just make this delay 0").font(.body)
+                            Spacer()
+                            Text("Goal Times").font(.headline)
+                            Text("When goals have been scored, you can scroll to the right screen and see a breakdown of the goals and the times they were scored for each team. You are able to swipe these to delete them if they were recorded by accident. Note that if a delay is set, the recorded time will be 00:00:00 if it occurs before the delay period.").font(.body)
+                            Spacer()
+                            
+                                
+                        }
+                    }.padding()
                     
                 }
                 )
