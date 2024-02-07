@@ -25,6 +25,12 @@ struct SettingItems: View {
                 } else if let stringValue = settingValue as? String {
                     Text("\(stringValue)")
                         .foregroundColor(.blue)
+                } else if let stringValue = settingValue as? Double {
+                    Text(String(format: "%.1f", stringValue))
+                        .foregroundColor(.blue)
+                } else if let stringValue = settingValue as? Int {
+                    Text("\(stringValue)")
+                        .foregroundColor(.blue)
                 } else if settingValue is Binding<Bool> {
                     Toggle("", isOn: settingValue as! Binding<Bool>)
                         .labelsHidden()

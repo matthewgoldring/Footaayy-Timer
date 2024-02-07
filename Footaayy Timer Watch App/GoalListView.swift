@@ -19,7 +19,7 @@ struct GoalListView: View {
             
             List {
                 if !homeScores.times.isEmpty {
-                    Section("\(homeScores.teamName)") {
+                    Section("\(appSettings.homeName)") {
                         ForEach(Array(homeScores.times.keys.sorted()), id: \.self) { key in
                             if let goalDetails = homeScores.times[key] {
                                 HStack {
@@ -35,7 +35,7 @@ struct GoalListView: View {
                 }
                 
                 if !awayScores.times.isEmpty {
-                    Section("\(awayScores.teamName)") {
+                    Section("\(appSettings.awayName)") {
                         ForEach(Array(awayScores.times.keys.sorted()), id: \.self) { key in
                             if let goalDetails = awayScores.times[key] {
                                 HStack {
@@ -52,7 +52,7 @@ struct GoalListView: View {
                 
                 
                 if !thirdButton.times.isEmpty {
-                    Section("\(thirdButton.teamName)") {
+                    Section("\(appSettings.thirdButtonText)") {
                         ForEach(Array(thirdButton.times.keys.sorted()), id: \.self) { key in
                             if let goalDetails = thirdButton.times[key] {
                                 HStack {

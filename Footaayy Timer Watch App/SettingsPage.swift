@@ -13,6 +13,8 @@ struct SettingsPage: View {
     @Binding var awayScores: keepScore
     @Binding var appSettings: globalSettings
     
+    @State var tempstorage: Double = 0.0
+    
     
     let colorChoices: [String: String] = [
         "FF0000":"Red",
@@ -41,13 +43,22 @@ struct SettingsPage: View {
         
     ]
     
+    let videoDelayChoices: [Int] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30]
+    
+    let keeperChangeChoices: [Double] =
+    [0.5,1.0,1.5,2.0,2.5,3.0,3.5,4.0,4.5,5.0,5.5,6.0,6.5,7.0,7.5,8.0,8.5,9.0,9.5,10.0,10.5,11.0,11.5,12.0,12.5,13.0,13.5,14.0,14.5,15.0]
+    
+    let boolChoices: [Bool:String] = [
+        true:"On",
+        false:"Off"]
+    
     var body: some View {
         NavigationView{
             List{
                 
-                
                 NavigationLink{
-                    TextField("Home Team", text:$appSettings.homeName).onChange(of: appSettings.homeName) { homeScores.teamName = appSettings.homeName}
+                    TextField("Home Team", text:$appSettings.homeName)
+                    SaveSettingsButton(appSettings: $appSettings)
                 } label: {
                     SettingItems(settingItem: "Home Team", settingValue: appSettings.homeName)
                 }
@@ -85,6 +96,7 @@ struct SettingsPage: View {
                                 }
                             }}
                     }
+                    SaveSettingsButton(appSettings: $appSettings)
                 } label: {
                     SettingItems(settingItem: "Home Colours", settingValue: colorChoices[appSettings.homeColour]! + "/" + colorChoices[appSettings.homeColourText]!)}
                 
@@ -92,7 +104,7 @@ struct SettingsPage: View {
                 
                 NavigationLink{
                     TextField("Away Team", text:$appSettings.awayName)
-                        .onChange(of: appSettings.awayName) { awayScores.teamName = appSettings.awayName}
+                    SaveSettingsButton(appSettings: $appSettings)
                 } label: {
                     SettingItems(settingItem: "Away Team", settingValue: appSettings.awayName)
                 }
@@ -129,44 +141,88 @@ struct SettingsPage: View {
                                 }
                             }}
                     }
-                    
+                    SaveSettingsButton(appSettings: $appSettings)
                 } label: {
                     SettingItems(settingItem: "Away Colours", settingValue: colorChoices[appSettings.awayColour]! + "/" + colorChoices[appSettings.awayColourText]!)}
                 
                 
                 NavigationLink{
                     TextField("Location", text:$appSettings.matchLocation)
+                    SaveSettingsButton(appSettings: $appSettings)
                 } label: {
                     SettingItems(settingItem: "Location", settingValue: appSettings.matchLocation)
                 }
                 
+                
                 NavigationLink{
-                    Stepper("\(appSettings.timeDelay)", value: $appSettings.timeDelay, in: 0...30)
-                        .font(.title3)
+                    Picker("Video Time Delay", selection: $appSettings.timeDelay) {
+                        ForEach(videoDelayChoices, id: \.self) { videotime in
+                            Text("\(videotime) Seconds").tag(videotime)
+                        }
+                    }
+                    SaveSettingsButton(appSettings: $appSettings)
                 } label: {
-                    SettingItems(settingItem: "Timer Delay (Seconds)", settingValue: String(appSettings.timeDelay))
-                }
+                    SettingItems(settingItem: "Video Time Delay", settingValue: appSettings.timeDelay)}
                 
                 
-                SettingItems(settingItem: "Keeper Change Clock", settingValue: $appSettings.includeKeeperChange)
+                
+                
+                
+                NavigationLink{
+                    Picker("Keeper Change Clock", selection: $appSettings.includeKeeperChange) {
+                        ForEach(boolChoices.sorted(by: { $0.value < $1.value }), id: \.key) { key, value in
+                            Text(value).tag(key)
+                        }
+                    }
+                    SaveSettingsButton(appSettings: $appSettings)
+                } label: {
+                    SettingItems(settingItem: "Keeper Change Clock", settingValue: boolChoices[appSettings.includeKeeperChange]!)}
+                
+                //ideally this would be a toggle, need to find better way to update the appsettings
+                //SettingItems(settingItem: "Keeper Change Clock", settingValue: $appSettings.includeKeeperChange)
                 
                 if appSettings.includeKeeperChange {
                     
                     NavigationLink{
-                        Stepper(String(format: "%.1f", appSettings.keeperChangeTime), value: $appSettings.keeperChangeTime, in: 0.5...25, step: 0.5)
-                            .font(.title3)
+                        Picker("Keeper Change Time", selection: $appSettings.keeperChangeTime) {
+                            ForEach(keeperChangeChoices, id: \.self) { keepertime in
+                                HStack{Text(String(format: "%.1f", keepertime))
+                                    Text("Minutes")}.tag(keepertime)
+                            }
+                        }
+                        SaveSettingsButton(appSettings: $appSettings)
                     } label: {
-                        SettingItems(settingItem: "Keeper Change (Minutes)", settingValue: String(appSettings.keeperChangeTime))
-                    }
+                        SettingItems(settingItem: "Keeper Change Time", settingValue: appSettings.keeperChangeTime)}
+                    
+                    
+                    
+                    //again, stepper would be better but hard to make work
+                    //                    NavigationLink{
+                    //                        Stepper(String(format: "%.1f", appSettings.keeperChangeTime), value: $appSettings.keeperChangeTime, in: 0.5...25, step: 0.5)
+                    //                            .font(.title3)
+                    //                    } label: {
+                    //                        SettingItems(settingItem: "Keeper Change (Minutes)", settingValue: String(appSettings.keeperChangeTime))
+                    //                    }
                 }
                 
-                SettingItems(settingItem: "Enable Third Button", settingValue: $appSettings.thirdButtonToggle)
+                NavigationLink{
+                    Picker("Enable Third Button", selection: $appSettings.thirdButtonToggle) {
+                        ForEach(boolChoices.sorted(by: { $0.value < $1.value }), id: \.key) { key, value in
+                            Text(value).tag(key)
+                        }
+                    }
+                    SaveSettingsButton(appSettings: $appSettings)
+                } label: {
+                    SettingItems(settingItem: "Enable Third Button", settingValue: boolChoices[appSettings.thirdButtonToggle]!)}
+                
+                //SettingItems(settingItem: "Enable Third Button", settingValue: $appSettings.thirdButtonToggle)
                 
                 
                 if appSettings.thirdButtonToggle {
                     
                     NavigationLink{
                         TextField("Third Button Text", text:$appSettings.thirdButtonText)
+                        SaveSettingsButton(appSettings: $appSettings)
                     } label: {
                         SettingItems(settingItem: "Third Button Text", settingValue: appSettings.thirdButtonText)
                     }
@@ -187,6 +243,7 @@ struct SettingsPage: View {
                                     Text(colorChoices[color]!)
                                 }
                             }}
+                        SaveSettingsButton(appSettings: $appSettings)
                     } label: {
                         SettingItems(settingItem: "Third Button Colour", settingValue: colorChoices[appSettings.thirdButtonColour]!)}
                     
@@ -199,35 +256,41 @@ struct SettingsPage: View {
                                     Text(icon)
                                 }
                             }}
+                        SaveSettingsButton(appSettings: $appSettings)
                     } label: {
                         SettingItems(settingItem: "Third Button Icon", settingValue: appSettings.thirdButtonIcon)}
-                    
-                    
-                    
-                    
-                    
-                    
+
                 }
                 
+                
+                
                 Button(action: {
-                    homeScores.teamName = "Home"
-                    appSettings.homeName = homeScores.teamName
-                    awayScores.teamName = "Away"
-                    appSettings.awayName = awayScores.teamName
+                    appSettings.homeName = "Home"
+                    appSettings.awayName = "Away"
+                    appSettings.homeColour = "05005B"
+                    appSettings.awayColour  = "018749"
                     appSettings.timeDelay = 15
                     appSettings.matchLocation = "Anfield"
-                    appSettings.thirdButtonToggle = true
-                    appSettings.thirdButtonIcon = "thermometer.high"
-                    appSettings.thirdButtonText = "Tekkers"
+                    appSettings.homeColourText = "FFFFFF"
+                    appSettings.awayColourText = "FFFFFF"
                     appSettings.includeKeeperChange = true
-                    appSettings.keeperChangeTime = 7.5
+                    appSettings.keeperChangeTime = 5.0
+                    appSettings.thirdButtonToggle = true
+                    appSettings.thirdButtonText = "Tekkers"
+                    appSettings.thirdButtonIcon = "thermometer.high"
+                    appSettings.thirdButtonColour = "FFA500"
+                    appSettings.alertKeeperDone = false
+                    appSettings.keeperRemainingTime = -1
+                    appSettings.keeperRunning = false
+                    
+                    appSettings.randomToggle.toggle()
                     
                 }, label: {
                     Text("Reset Settings")
                 })
                 
                 
-            }
+            }.id(UUID())
             
             
         }

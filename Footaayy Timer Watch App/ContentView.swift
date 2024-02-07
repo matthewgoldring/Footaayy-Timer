@@ -17,26 +17,27 @@ struct keepScore{
     //    }
 }
 
-struct globalSettings: Codable{
-    
-    var homeName: String = "Home"
-    var homeColour: String = "05005B"
-    var awayName: String = "Away"
-    var awayColour: String = "018749"
-    var timeDelay: Int = 15
-    var matchLocation: String = "Anfield"
-    var homeColourText: String = "FFFFFF"
-    var awayColourText: String = "FFFFFF"
-    var includeKeeperChange: Bool = true
-    var keeperChangeTime: Double = 5.0
-    var thirdButtonToggle: Bool = true
-    var thirdButtonText: String = "Tekkers"
-    var thirdButtonIcon: String = "thermometer.high"
-    var thirdButtonColour: String = "FFA500"
+struct globalSettings {
+    @AppStorage("homeName") var homeName: String = "Home"
+    @AppStorage("homeColour") var homeColour: String = "05005B"
+    @AppStorage("awayName") var awayName: String = "Away"
+    @AppStorage("awayColour") var awayColour: String = "018749"
+    @AppStorage("timeDelay") var timeDelay: Int = 15
+    @AppStorage("matchLocation") var matchLocation: String = "Anfield"
+    @AppStorage("homeColourText") var homeColourText: String = "FFFFFF"
+    @AppStorage("awayColourText") var awayColourText: String = "FFFFFF"
+    @AppStorage("includeKeeperChange") var includeKeeperChange: Bool = true
+    @AppStorage("keeperChangeTime") var keeperChangeTime: Double = 5.0
+    @AppStorage("thirdButtonToggle") var thirdButtonToggle: Bool = true
+    @AppStorage("thirdButtonText") var thirdButtonText: String = "Tekkers"
+    @AppStorage("thirdButtonIcon") var thirdButtonIcon: String = "thermometer.high"
+    @AppStorage("thirdButtonColour") var thirdButtonColour: String = "FFA500"
     var alertKeeperDone: Bool = false
     var keeperRemainingTime: Int = -1
     var keeperRunning: Bool = false
+    var randomToggle: Bool = false
 }
+
 
 extension Color {
     init(hex: String) {
@@ -70,7 +71,6 @@ enum Pages {
 }
 
 func watchTimeToReadable(from elapsedTime: Double, timeDelay: Double) -> String {
-    //let goalTime = Double(round(100 * elapsedTime) / 100)
     let adjustedTimeWithDelay = elapsedTime - timeDelay
     let formattedTime = elapsedTimeStr(timeInterval: adjustedTimeWithDelay)
     return String(formattedTime)
@@ -183,11 +183,13 @@ struct ControlPanel: View {
     var playPauseImage: Image {
         return Image(systemName: mainStopwatch.isRunning ? "pause":"figure.soccer")
     }
+    
+    
     var body: some View {
         VStack {
-            
+                        
             if (mainStopwatch.elapsedTime == 0) {
-                Text("Footaayy Timer")
+                Text("Footaayy Time")
             } else {
                 Text(mainStopwatch.isRunning ? "Kicked Off":"Paused")
             }
@@ -354,7 +356,7 @@ struct MainView: View {
             Divider()
             
             HStack {
-                Text("\(homeScores.teamName)")
+                Text("\(appSettings.homeName)")
                     .font(.system(size: 15))
                     .frame(width: 44)
                 
@@ -371,7 +373,7 @@ struct MainView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .center)
                 
-                Text("\(awayScores.teamName)")
+                Text("\(appSettings.awayName)")
                     .font(.system(size: 15))
                     .frame(width: 44)
             }

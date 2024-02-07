@@ -21,7 +21,7 @@ struct GoalList: View {
         ScrollView{
             VStack{
                 Text("Footaay").font(.system(size:  16))
-                Text("\(homeScores.teamName) vs \(awayScores.teamName)").font(.system(size: 12))
+                Text("\(appSettings.homeName) vs \(appSettings.awayName)").font(.system(size: 12))
                 
                 (Text("\(appSettings.matchLocation) - ") + Text(Date.now, format: .dateTime.day().month().year())).font(.system(size: 12))
                 
