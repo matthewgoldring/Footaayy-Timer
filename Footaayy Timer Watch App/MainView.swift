@@ -62,18 +62,24 @@ struct MainView: View {
                            
                     ){
                         
-                        if appSettings.keeperRunning{
-                            
+                        if !appSettings.keeperRunning || appSettings.keeperRemainingTime < 0 || appSettings.keeperRemainingTime > Int(appSettings.keeperChangeTime * 60) {
+                            Image(systemName: "hand.wave.fill")
+                        } else {
                             if appSettings.keeperRemainingTime < 90 {
                                 Text("\(appSettings.keeperRemainingTime)")
                                     .font(.system(size: 10))
                             } else {
-                                Text("\(Int((Double(appSettings.keeperRemainingTime) / 60)))")
-                                .font(.system(size: 18))}
-                            
-                        } else {
-                            Image(systemName: "hand.wave.fill")
+                                Text("\(appSettings.keeperRemainingTime / 60)")
+                                    .font(.system(size: 18))
+                            }
                         }
+                        
+                        
+                    
+                        
+                        
+                        
+                        
                         
                     }
                     .frame(width: 32,height: 32)
