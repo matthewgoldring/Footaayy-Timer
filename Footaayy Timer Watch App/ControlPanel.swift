@@ -25,7 +25,7 @@ struct ControlPanel: View {
         VStack {
             
             if (mainStopwatch.elapsedTime == 0) {
-                Text("Footaayy Time")
+                Text("Footaayy Timer")
             } else {
                 Text(mainStopwatch.isRunning ? "Kicked Off":"Paused")
             }

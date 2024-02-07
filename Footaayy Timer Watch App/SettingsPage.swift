@@ -225,7 +225,7 @@ struct SettingsPage: View {
                     }
                     SaveSettingsButton(appSettings: $appSettings)
                 } label: {
-                    SettingItems(settingItem: "Enable Third Button", settingValue: boolChoices[appSettings.thirdButtonToggle]!)}
+                    SettingItems(settingItem: "Third Button", settingValue: boolChoices[appSettings.thirdButtonToggle]!)}
                 
                 //SettingItems(settingItem: "Enable Third Button", settingValue: $appSettings.thirdButtonToggle)
                 
@@ -281,13 +281,13 @@ struct SettingsPage: View {
                         appSettings.awayName = "Away"
                         appSettings.homeColour = "05005B"
                         appSettings.awayColour  = "018749"
-                        appSettings.timeDelay = 15
+                        appSettings.timeDelay = 0
                         appSettings.matchLocation = "Anfield"
                         appSettings.homeColourText = "FFFFFF"
                         appSettings.awayColourText = "FFFFFF"
-                        appSettings.includeKeeperChange = true
+                        appSettings.includeKeeperChange = false
                         appSettings.keeperChangeTime = 5.0
-                        appSettings.thirdButtonToggle = true
+                        appSettings.thirdButtonToggle = false
                         appSettings.thirdButtonText = "Tekkers"
                         appSettings.thirdButtonIcon = "thermometer.high"
                         appSettings.thirdButtonColour = "FFA500"

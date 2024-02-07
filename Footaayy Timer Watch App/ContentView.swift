@@ -25,9 +25,9 @@ struct globalSettings {
     @AppStorage("matchLocation") var matchLocation: String = "Anfield"
     @AppStorage("homeColourText") var homeColourText: String = "FFFFFF"
     @AppStorage("awayColourText") var awayColourText: String = "FFFFFF"
-    @AppStorage("includeKeeperChange") var includeKeeperChange: Bool = true
+    @AppStorage("includeKeeperChange") var includeKeeperChange: Bool = false
     @AppStorage("keeperChangeTime") var keeperChangeTime: Double = 5.0
-    @AppStorage("thirdButtonToggle") var thirdButtonToggle: Bool = true
+    @AppStorage("thirdButtonToggle") var thirdButtonToggle: Bool = false
     @AppStorage("thirdButtonText") var thirdButtonText: String = "Tekkers"
     @AppStorage("thirdButtonIcon") var thirdButtonIcon: String = "thermometer.high"
     @AppStorage("thirdButtonColour") var thirdButtonColour: String = "FFA500"
