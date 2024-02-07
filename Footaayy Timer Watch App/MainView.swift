@@ -16,22 +16,35 @@ struct MainView: View {
     
     @State var keeperEndTime: Double = -1
     
-    var formatter: DateComponentsFormatter = {
+    var displayFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
         formatter.unitsStyle = .positional // Use the appropriate positioning for the current locale
-        formatter.allowedUnits = [ .hour, .minute, .second ] // Units to display in the formatted string
+        formatter.allowedUnits = [.minute, .second ] // Units to display in the formatted string
+        formatter.zeroFormattingBehavior = [ .pad ] // Pad with zeroes where appropriate for the locale
+        formatter.allowsFractionalUnits = true
+        formatter.maximumUnitCount = 2
+        return formatter
+    }()
+    
+    var youtubeFormatter: DateComponentsFormatter = {
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .positional // Use the appropriate positioning for the current locale
+        formatter.allowedUnits = [.hour, .minute, .second ] // Units to display in the formatted string
         formatter.zeroFormattingBehavior = [ .pad ] // Pad with zeroes where appropriate for the locale
         formatter.allowsFractionalUnits = true
         return formatter
     }()
     
-    func elapsedTimeStr(timeInterval: TimeInterval) -> String {
-        return formatter.string(from: timeInterval) ?? ""
-    }
+    func elapsedTimeStr(timeInterval: TimeInterval, youtubeRequired: Bool) -> String {
+        if youtubeRequired{
+            return youtubeFormatter.string(from: timeInterval) ?? ""} else {
+                return displayFormatter.string(from: timeInterval) ?? ""}
+            }
+    
     
     func getTimeMinusDelay(elapsedTime: Double) -> String {
         let adjustedTimeWithDelay = elapsedTime - Double(appSettings.timeDelay)
-        let formattedTime = elapsedTimeStr(timeInterval: adjustedTimeWithDelay)
+        let formattedTime = elapsedTimeStr(timeInterval: adjustedTimeWithDelay, youtubeRequired: true)
         return String(formattedTime)
     }
     
@@ -96,8 +109,8 @@ struct MainView: View {
                     
                 }
                 
-                Text(elapsedTimeStr(timeInterval: mainStopwatch.elapsedTime))
-                    .font(.system(size: 18, design: .monospaced))
+                Text(elapsedTimeStr(timeInterval: mainStopwatch.elapsedTime, youtubeRequired: false))
+                    .font(.system(size: 20, design: .monospaced))
                     .frame(maxWidth: .infinity, alignment: .center)
                 
                 
@@ -207,7 +220,7 @@ struct MainView: View {
         }
         
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .edgesIgnoringSafeArea(.all)
+        .edgesIgnoringSafeArea(.bottom)
         .padding()
         .background(Color(red: 190/255, green: 39/255, blue: 51/255))
     }

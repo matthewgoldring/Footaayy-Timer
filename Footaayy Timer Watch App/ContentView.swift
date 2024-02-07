@@ -21,7 +21,7 @@ struct globalSettings {
     @AppStorage("homeColour") var homeColour: String = "05005B"
     @AppStorage("awayName") var awayName: String = "Away"
     @AppStorage("awayColour") var awayColour: String = "018749"
-    @AppStorage("timeDelay") var timeDelay: Int = 15
+    @AppStorage("timeDelay") var timeDelay: Int = 0
     @AppStorage("matchLocation") var matchLocation: String = "Anfield"
     @AppStorage("homeColourText") var homeColourText: String = "FFFFFF"
     @AppStorage("awayColourText") var awayColourText: String = "FFFFFF"
