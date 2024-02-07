@@ -9,11 +9,12 @@ import SwiftUI
 
 struct SettingsPage: View {
     
+    @ObservedObject var mainStopwatch: Stopwatch
     @Binding var homeScores: keepScore
     @Binding var awayScores: keepScore
     @Binding var appSettings: globalSettings
-    
-    @State var tempstorage: Double = 0.0
+    @State var helpPresented: Bool = false
+   
     
     
     let colorChoices: [String: String] = [
@@ -53,6 +54,10 @@ struct SettingsPage: View {
         false:"Off"]
     
     var body: some View {
+        
+        let settingsDisabledCondition = (mainStopwatch.elapsedTime == 0)
+        
+        
         NavigationView{
             List{
                 
@@ -153,19 +158,20 @@ struct SettingsPage: View {
                     SettingItems(settingItem: "Location", settingValue: appSettings.matchLocation)
                 }
                 
-                
-                NavigationLink{
-                    Picker("Video Time Delay", selection: $appSettings.timeDelay) {
-                        ForEach(videoDelayChoices, id: \.self) { videotime in
-                            Text("\(videotime) Seconds").tag(videotime)
+                if settingsDisabledCondition{
+                    
+                    NavigationLink{
+                        Picker("Video Time Delay", selection: $appSettings.timeDelay) {
+                            ForEach(videoDelayChoices, id: \.self) { videotime in
+                                Text("\(videotime) Seconds").tag(videotime)
+                            }
                         }
-                    }
-                    SaveSettingsButton(appSettings: $appSettings)
-                } label: {
-                    SettingItems(settingItem: "Video Time Delay", settingValue: appSettings.timeDelay)}
-                
-                
-                
+                        SaveSettingsButton(appSettings: $appSettings)
+                    } label: {
+                        SettingItems(settingItem: "Video Time Delay", settingValue: appSettings.timeDelay)}
+                    
+                    
+                }
                 
                 
                 NavigationLink{
@@ -190,7 +196,13 @@ struct SettingsPage: View {
                                     Text("Minutes")}.tag(keepertime)
                             }
                         }
-                        SaveSettingsButton(appSettings: $appSettings)
+                        Button(action: {
+                            appSettings.randomToggle.toggle()
+                            appSettings.keeperRunning = false
+                        }, label: {
+                            Text("Save")
+                        })
+                        
                     } label: {
                         SettingItems(settingItem: "Keeper Change Time", settingValue: appSettings.keeperChangeTime)}
                     
@@ -263,31 +275,49 @@ struct SettingsPage: View {
                 }
                 
                 
+                if settingsDisabledCondition{
+                    Button(action: {
+                        appSettings.homeName = "Home"
+                        appSettings.awayName = "Away"
+                        appSettings.homeColour = "05005B"
+                        appSettings.awayColour  = "018749"
+                        appSettings.timeDelay = 15
+                        appSettings.matchLocation = "Anfield"
+                        appSettings.homeColourText = "FFFFFF"
+                        appSettings.awayColourText = "FFFFFF"
+                        appSettings.includeKeeperChange = true
+                        appSettings.keeperChangeTime = 5.0
+                        appSettings.thirdButtonToggle = true
+                        appSettings.thirdButtonText = "Tekkers"
+                        appSettings.thirdButtonIcon = "thermometer.high"
+                        appSettings.thirdButtonColour = "FFA500"
+                        appSettings.alertKeeperDone = false
+                        appSettings.keeperRemainingTime = -1
+                        appSettings.keeperRunning = false
+                        
+                        appSettings.randomToggle.toggle()
+                        
+                    }, label: {
+                        Text("Reset Settings")
+                    })
+                }
                 
                 Button(action: {
-                    appSettings.homeName = "Home"
-                    appSettings.awayName = "Away"
-                    appSettings.homeColour = "05005B"
-                    appSettings.awayColour  = "018749"
-                    appSettings.timeDelay = 15
-                    appSettings.matchLocation = "Anfield"
-                    appSettings.homeColourText = "FFFFFF"
-                    appSettings.awayColourText = "FFFFFF"
-                    appSettings.includeKeeperChange = true
-                    appSettings.keeperChangeTime = 5.0
-                    appSettings.thirdButtonToggle = true
-                    appSettings.thirdButtonText = "Tekkers"
-                    appSettings.thirdButtonIcon = "thermometer.high"
-                    appSettings.thirdButtonColour = "FFA500"
-                    appSettings.alertKeeperDone = false
-                    appSettings.keeperRemainingTime = -1
-                    appSettings.keeperRunning = false
-                    
-                    appSettings.randomToggle.toggle()
+                    helpPresented.toggle()
                     
                 }, label: {
-                    Text("Reset Settings")
-                })
+                    Text("Help")
+                }).fullScreenCover(isPresented: $helpPresented, content:{
+                    
+                    ScrollView {
+                        Text("Thanks for downloading the app. This was designed for a specific purpose, so I would like to explain some features and future plans. The video time delay is designed to help when uploading goal times to YouTube. It adds a delay to the listed goal times so that the time of the build up to a goal can be captured. If you simply want to record the goal times, just make this delay 0. ")
+                                    .padding()
+                            }
+                    
+                    
+                }
+                )
+            
                 
                 
             }.id(UUID())

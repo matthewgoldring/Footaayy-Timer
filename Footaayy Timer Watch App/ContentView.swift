@@ -10,11 +10,11 @@ struct keepScore{
     }
     
     var times = [Int: (String, Double)]()
-    //{
-    //        didSet {
-    //            print("Goal Times \(self.teamName):  \(times)")
-    //        }
-    //    }
+    {
+        didSet {
+            print("Goal Times \(self.teamName):  \(times)")
+        }
+    }
 }
 
 struct globalSettings {
@@ -55,7 +55,7 @@ extension Color {
         default:
             (a, r, g, b) = (1, 1, 1, 0)
         }
-
+        
         self.init(
             .sRGB,
             red: Double(r) / 255,
@@ -70,11 +70,7 @@ enum Pages {
     case controlPanel, mainView, goalListView
 }
 
-func watchTimeToReadable(from elapsedTime: Double, timeDelay: Double) -> String {
-    let adjustedTimeWithDelay = elapsedTime - timeDelay
-    let formattedTime = elapsedTimeStr(timeInterval: adjustedTimeWithDelay)
-    return String(formattedTime)
-}
+
 
 func elapsedTimeStr(timeInterval: TimeInterval) -> String {
     return formatter.string(from: timeInterval) ?? ""
@@ -187,7 +183,7 @@ struct ControlPanel: View {
     
     var body: some View {
         VStack {
-                        
+            
             if (mainStopwatch.elapsedTime == 0) {
                 Text("Footaayy Time")
             } else {
@@ -224,7 +220,7 @@ struct ControlPanel: View {
             
             HStack{
                 
-                let settingsDisabledCondition = !(mainStopwatch.elapsedTime == 0)
+                let settingsDisabledCondition = mainStopwatch.isRunning
                 let listDisabledCondition = mainStopwatch.isRunning || (mainStopwatch.elapsedTime == 0)
                 
                 Button(action: {
@@ -238,7 +234,7 @@ struct ControlPanel: View {
                 .fullScreenCover(isPresented:  $settingsIsPresented, content:{
                     
                     
-                    SettingsPage(homeScores: $homeScores,awayScores: $awayScores, appSettings: $appSettings).navigationTitle("Settings").frame(maxWidth: .infinity, maxHeight: .infinity).background(.black)}
+                    SettingsPage(mainStopwatch: mainStopwatch, homeScores: $homeScores,awayScores: $awayScores, appSettings: $appSettings).navigationTitle("Settings").frame(maxWidth: .infinity, maxHeight: .infinity).background(.black)}
                                  
                 )
                 
@@ -273,7 +269,20 @@ struct MainView: View {
     
     @State var keeperEndTime: Double = -1
     
+    func getTimeMinusDelay(elapsedTime: Double) -> String {
+        let adjustedTimeWithDelay = elapsedTime - Double(appSettings.timeDelay)
+        let formattedTime = elapsedTimeStr(timeInterval: adjustedTimeWithDelay)
+        return String(formattedTime)
+    }
     
+    func goalTimesBeforeOrAfterDelay(elapsedTime: TimeInterval) -> (String, TimeInterval) {
+        if Double(elapsedTime) <= Double(appSettings.timeDelay) {
+            return ("00:00:00", elapsedTime)
+        } else {
+            let newTime = getTimeMinusDelay(elapsedTime: elapsedTime)
+            return (String(newTime), elapsedTime)
+        }
+    }
     
     var body: some View {
         VStack {
@@ -382,7 +391,10 @@ struct MainView: View {
             HStack {
                 Button(action: {
                     let homeScoreCount = homeScores.times.count + 1
-                    homeScores.times[homeScoreCount] = (String(watchTimeToReadable(from: Double(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),mainStopwatch.elapsedTime)
+                    
+                    homeScores.times[homeScoreCount] = goalTimesBeforeOrAfterDelay(elapsedTime: mainStopwatch.elapsedTime)
+                    
+                    
                 }){
                     Image(systemName: "soccerball.inverse")
                 }.foregroundColor(Color(hex:appSettings.homeColourText))
@@ -398,7 +410,8 @@ struct MainView: View {
                     
                     Button(action: {
                         let thirdButtonCount = thirdButton.times.count + 1
-                        thirdButton.times[thirdButtonCount] = (String(watchTimeToReadable(from: Double(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
+                        
+                        thirdButton.times[thirdButtonCount] =  goalTimesBeforeOrAfterDelay(elapsedTime: mainStopwatch.elapsedTime)
                     }){
                         Image(systemName: appSettings.thirdButtonIcon)
                     }
@@ -415,7 +428,7 @@ struct MainView: View {
                 
                 Button(action: {
                     let awayScoreCount = awayScores.times.count + 1
-                    awayScores.times[awayScoreCount] = (String(watchTimeToReadable(from: Double(mainStopwatch.elapsedTime), timeDelay: Double(appSettings.timeDelay))),(mainStopwatch.elapsedTime))
+                    awayScores.times[awayScoreCount] = goalTimesBeforeOrAfterDelay(elapsedTime: mainStopwatch.elapsedTime)
                 }){
                     Image(systemName: "soccerball.inverse")
                 }.foregroundColor(Color(hex:appSettings.awayColourText))
