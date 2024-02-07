@@ -28,17 +28,6 @@ class Stopwatch: ObservableObject, Identifiable {
     
     let id = UUID()
     
-    
-//    init() {
-//            // Default initializer
-//        }
-//
-//        init(elapsedTime: TimeInterval) {
-//            self.accumulatedTime = elapsedTime
-//            self.elapsedTime = elapsedTime
-//        }
-    
-    
     private func start() -> Void {
         self.timer?.cancel()
         self.timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect().sink { _ in
