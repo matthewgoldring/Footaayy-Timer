@@ -25,7 +25,7 @@
 		4809AF4F2B6C17C4000A1417 /* SettingsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPage.swift; sourceTree = "<group>"; };
 		4809AF6B2B6EFC8B000A1417 /* SettingItems.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingItems.swift; sourceTree = "<group>"; };
 		4809AF6D2B6F9786000A1417 /* GoalList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalList.swift; sourceTree = "<group>"; };
-		4820F6952B6A7D1700ADDD52 /* Footaayy Timer App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Footaayy Timer App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4820F6952B6A7D1700ADDD52 /* Footaayy Timer Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Footaayy Timer Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4820F6982B6A7D1700ADDD52 /* Footaayy_TimerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Footaayy_TimerApp.swift; sourceTree = "<group>"; };
 		4820F69A2B6A7D1700ADDD52 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		4820F69C2B6A7D1800ADDD52 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -59,7 +59,7 @@
 		4820F6962B6A7D1700ADDD52 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4820F6952B6A7D1700ADDD52 /* Footaayy Timer App.app */,
+				4820F6952B6A7D1700ADDD52 /* Footaayy Timer Watch App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,9 +94,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		4820F6942B6A7D1700ADDD52 /* Footaayy Timer App */ = {
+		4820F6942B6A7D1700ADDD52 /* Footaayy Timer Watch App */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 4820F6A32B6A7D1800ADDD52 /* Build configuration list for PBXNativeTarget "Footaayy Timer App" */;
+			buildConfigurationList = 4820F6A32B6A7D1800ADDD52 /* Build configuration list for PBXNativeTarget "Footaayy Timer Watch App" */;
 			buildPhases = (
 				4820F6912B6A7D1700ADDD52 /* Sources */,
 				4820F6922B6A7D1700ADDD52 /* Frameworks */,
@@ -106,9 +106,9 @@
 			);
 			dependencies = (
 			);
-			name = "Footaayy Timer App";
+			name = "Footaayy Timer Watch App";
 			productName = "Footaayy Timer Watch App";
-			productReference = 4820F6952B6A7D1700ADDD52 /* Footaayy Timer App.app */;
+			productReference = 4820F6952B6A7D1700ADDD52 /* Footaayy Timer Watch App.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -139,7 +139,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				4820F6942B6A7D1700ADDD52 /* Footaayy Timer App */,
+				4820F6942B6A7D1700ADDD52 /* Footaayy Timer Watch App */,
 			);
 		};
 /* End PBXProject section */
@@ -370,7 +370,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		4820F6A32B6A7D1800ADDD52 /* Build configuration list for PBXNativeTarget "Footaayy Timer App" */ = {
+		4820F6A32B6A7D1800ADDD52 /* Build configuration list for PBXNativeTarget "Footaayy Timer Watch App" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				4820F6A42B6A7D1800ADDD52 /* Debug */,
